@@ -1,0 +1,34 @@
+@import "variables.scss";
+.table-box {
+  background: rgb(29,41,81);
+  background: linear-gradient(320deg, rgba(29,41,81,1) 15%, rgba(217,217,217,0.4) 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  border-radius: 20px;
+}
+
+th {
+  color: $white;
+}
+
+.no-result {
+  color: $white;
+  height: 500px;
+  vertical-align: middle;
+}
+
+.pager {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-btn {
+  color: #FFE3D8;
+  background-color: #1D2951;
+  margin-left: 15px !important;
+  border-radius: 10px !important;
+}
+
+.input-search {
+  border-radius: 10px !important;
+}

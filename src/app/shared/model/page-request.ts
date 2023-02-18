@@ -12,10 +12,10 @@ export class PageRequest {
     public sort: Sort[],
     // @ts-ignore
 
-    public totalElements?: number | unknown,
+    public totalElements?: number,
     // @ts-ignore
 
-    public totalPages?: number | unknown,
+    public totalPages?: number,
   ) {}
 
   setSort(sort: Sort): void {
