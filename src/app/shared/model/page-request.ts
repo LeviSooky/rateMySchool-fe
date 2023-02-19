@@ -2,9 +2,9 @@ import {Sort} from "./sort.model";
 
 export class PageRequest {
 
-  static readonly DEFAULT = new PageRequest(0, 250, []);
-  static readonly TOTAL_ELEMENTS_HEADER = 'totalElements';
-  static readonly TOTAL_PAGES_HEADER = 'totalPages';
+  static readonly DEFAULT = new PageRequest(0, 20, []);
+  static readonly TOTAL_ELEMENTS_HEADER = 'total-elements';
+  static readonly TOTAL_PAGES_HEADER = 'total-pages';
   constructor
   (
     public page: number,

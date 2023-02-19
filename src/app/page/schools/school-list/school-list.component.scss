@@ -1,11 +1,4 @@
 @import "variables.scss";
-.table-box {
-  background: rgb(29,41,81);
-  background: linear-gradient(320deg, rgba(29,41,81,1) 15%, rgba(217,217,217,0.4) 100%);
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  border-radius: 20px;
-}
 
 th {
   color: $white;
@@ -31,4 +24,9 @@ th {
 
 .input-search {
   border-radius: 10px !important;
+}
+
+nav li a {
+  background-color: $blue;
+  color: $white;
 }

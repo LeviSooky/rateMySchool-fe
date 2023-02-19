@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
 html {
   height: 100%;
 }
@@ -10,5 +12,13 @@ body {
   background: linear-gradient(107.54deg, #1D2951 0%, rgba(29, 41, 81, 0.8) 100%);
   font-family: 'Inter', sans-serif;
   font-style: normal;
+}
+
+.table-box {
+  background: rgb(29,41,81);
+  background: linear-gradient(320deg, rgba(29,41,81,1) 15%, rgba(217,217,217,0.4) 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  border-radius: 20px;
 }
 

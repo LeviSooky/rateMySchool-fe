@@ -3,6 +3,7 @@ import {SchoolService} from "../../../shared/service/school.service";
 import {School} from "../../../shared/model/school.model";
 import {PageRequest} from "../../../shared/model/page-request";
 import {take} from "rxjs";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-school-list',
@@ -14,13 +15,12 @@ export class SchoolListComponent implements OnInit {
   keyword: string = '';
   schools: School[] = [];
   private pageRequest: PageRequest = PageRequest.DEFAULT;
-  constructor(private schoolService: SchoolService) {
+  constructor(private schoolService: SchoolService, private router: Router) {
   }
   ngOnInit(): void {
     this.schoolService.findAll(this.pageRequest)
       .pipe(take(1))
       .subscribe(result => {
-        console.log("hello", result)
         this.schools = result;
     })
   }
@@ -39,16 +39,18 @@ export class SchoolListComponent implements OnInit {
         .subscribe(result => this.schools = result)  }
 
   openSchool(index: number) {
-    //TODO implement
+    let id = this.schools[index].id;
+    // @ts-ignore
+    this.router.navigate(['/schools/', id]);
   }
 
   hasNextPage(): boolean {
     // @ts-ignore
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page;
+    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 1;
   }
 
   hasNextNextPage(): boolean { //TODO rename
     // @ts-ignore
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 1;
+    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 2;
   }
 }

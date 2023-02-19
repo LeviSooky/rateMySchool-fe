@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {NgbModalModule, NgbModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModalModule, NgbModule, NgbRatingModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
 
@@ -11,11 +11,12 @@ import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
     NgbToastModule,
     NgbModalModule,
     NgbModule,
-
+    NgbRatingModule
   ],
   exports: [
     NgbToastModule,
-    NgbModalModule
+    NgbModalModule,
+    NgbRatingModule
   ],
   providers: [
     {

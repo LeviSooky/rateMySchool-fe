@@ -1,0 +1,39 @@
+@import 'variables.scss';
+
+th {
+  color: $white;
+}
+
+.title {
+  color: $white;
+}
+
+.rating {
+  min-width: 120px;
+}
+
+i {
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  padding: 0 2px;
+  padding-right: 0.1rem;
+  color: #d3d3d3;
+}
+
+.filled {
+  color: gold;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+tbody {
+  color: #fff;
+}
+
+.review {
+  font-style: oblique;
+  font-weight: lighter !important;
+}
