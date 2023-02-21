@@ -16,7 +16,8 @@ import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
   exports: [
     NgbToastModule,
     NgbModalModule,
-    NgbRatingModule
+    NgbRatingModule,
+    NgbModalModule,
   ],
   providers: [
     {

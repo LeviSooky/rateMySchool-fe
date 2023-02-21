@@ -26,7 +26,17 @@ th {
   border-radius: 10px !important;
 }
 
-nav li a {
+nav li button {
   background-color: $blue;
   color: $white;
+}
+
+nav li button:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+#create-button {
+  background-color: #228B22;
+  margin-right: 12px;
 }

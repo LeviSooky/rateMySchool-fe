@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {Subscription, take} from "rxjs";
+import {forkJoin, Subscription, take} from "rxjs";
 import {SchoolService} from "../../../shared/service/school.service";
 import {School} from "../../../shared/model/school.model";
-import {TeacherReview} from "../../../shared/model/teacher-review";
-import * as moment from "moment";
+import {SchoolReviewService} from "../../../shared/service/school-review.service";
+import {PageRequest} from "../../../shared/model/page-request";
+import {SchoolReview} from "../../../shared/model/school-review.model";
 
 @Component({
   selector: 'app-school',
@@ -19,10 +20,12 @@ export class SchoolComponent implements OnInit {
   currentRate = 3.16; //TODO remove
   // @ts-ignore
   school: School = null;
-  reviews: TeacherReview[] = []; //TODO change it
+  reviews: SchoolReview[] = []; //TODO change it
+  pageReq = PageRequest.DEFAULT;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
+    private reviewService: SchoolReviewService
   ) {}
 
   ngOnInit() {
@@ -30,23 +33,42 @@ export class SchoolComponent implements OnInit {
       .pipe(take(1))
       .subscribe(params => {
         this.id = params['id'];
-        this.schoolService.findBy(this.id)
-          .pipe(take(1))
-          .subscribe(result => {
-            this.school = result;
-            this.reviews = [
-              new TeacherReview(4, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-              new TeacherReview(1, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-              new TeacherReview(3, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-              new TeacherReview(5, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-              new TeacherReview(2.5, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-              new TeacherReview(2, 'It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using \'Content here, content here\', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for \'lorem ipsum\'', moment()),
-            ];
-          })
+        forkJoin({
+          school: this.schoolService.findBy(this.id),
+          reviews: this.reviewService.findAllActiveBy(this.id, this.pageReq)
+        }).pipe(take(1))
+          .subscribe(({school, reviews}) => {
+            this.school = school;
+            this.reviews = reviews;
+        })
+
       });
   }
 
   getByRating(): string {
     return '';//TODO
+  }
+
+  getPageable() {
+    return this.pageReq;
+  }
+
+  hasNextPage() {
+    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 1;
+  }
+
+  hasNextNextPage() {
+    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 2;
+  }
+
+  toPage(pageNumber: number) {
+    this.getPageable().page = pageNumber;
+    this.searchReviews();
+  }
+
+  searchReviews() {
+    this.reviewService.findAllActiveBy(this.school.id, this.getPageable())
+      .pipe(take(1))
+      .subscribe(result => this.reviews = result);
   }
 }

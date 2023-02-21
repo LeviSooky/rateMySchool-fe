@@ -36,11 +36,40 @@
           </td>
           <td class="rating">
             <ngb-rating [rate]="review.stars" [starTemplate]="t" [max]="5" [readonly]="true"></ngb-rating>
-            <div class="">{{review.date?.toDate() | date: 'YYYY-MMM-dd'}}</div>
+            <div class="sticky-bottom">{{review.creationDate?.toDate() | date: 'YYYY-MMM-dd'}}</div>
           </td>
         </tr>
         </tbody>
       </table>
+      <nav class="pager" *ngIf="getPageable().totalElements">
+        <ul class="pagination">
+          <li class="page-item" *ngIf="getPageable().page > 0">
+            <button class="page-link" aria-label="Previous" (click)="toPage(0)">
+              &laquo;
+            </button>
+          </li>
+          <li *ngIf="getPageable().page > 0" class="page-item">
+            <button class="page-link" (click)="toPage(getPageable().page - 1)">{{getPageable().page}}</button>
+          </li>
+          <li *ngIf="hasNextPage()" class="page-item active">
+            <button class="page-link">{{getPageable().page + 1}}</button>
+          </li>
+          <li *ngIf="getPageable().page === getPageable().totalPages - 1" class="page-item active">
+            <button class="page-link">{{getPageable().page + 1}}</button>
+          </li>
+          <li *ngIf="hasNextPage()" class="page-item">
+            <button class="page-link" (click)="toPage(getPageable().page + 1)">{{getPageable().page + 2}}</button>
+          </li>
+          <li *ngIf="getPageable().page === 0  && hasNextNextPage()" class="page-item">
+            <button class="page-link" (click)="toPage(getPageable().page + 2)" >{{getPageable().page + 3}}</button>
+          </li>
+          <li class="page-item" *ngIf="getPageable().page !== getPageable().totalPages - 1">
+            <button class="page-link" (click)="toPage(getPageable().totalPages - 1)" aria-label="Next">
+              &raquo;
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </div>
@@ -50,3 +79,5 @@
     <i *ngIf="fill > 0" class="bi-star-fill filled" [style.width.%]="fill"></i>
   </i>
 </ng-template>
+
+

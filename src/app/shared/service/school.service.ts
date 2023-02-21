@@ -15,21 +15,21 @@ export class SchoolService {
   constructor(private http: HttpClient) { }
 
   findAllBy(keyword: string, page: PageRequest): Observable<School[]> { //TODO refactor
-    let httpParams = GetPaginationParams(page);
+    let httpParams = getPaginationParams(page);
     return this.http
       .get<any[]>(`${this.resourceUrl}/search/${keyword}`, { observe: "body", params: httpParams})
       .pipe(map((res:any[]) => this.convertArray(res)));
   }
 
   findAll(page: PageRequest): Observable<School[]> {
-    let httpParams = GetPaginationParams(page);
+    let httpParams = getPaginationParams(page);
     return this.http
       .get<any[]>(`${this.resourceUrl}/search`, { observe: "response", params: httpParams})
       .pipe(map((res:HttpResponse<any[]>) => {
         // @ts-ignore
-        page.totalPages = res.headers.get(PageRequest.TOTAL_PAGES_HEADER);
+        page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         // @ts-ignore
-        page.totalElements = res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER);
+        page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
         // @ts-ignore
         return this.convertArray(res.body);
       }));
@@ -61,7 +61,7 @@ export class SchoolService {
   }
 }
 
-export function GetPaginationParams(pageRequest: PageRequest): HttpParams {
+export function getPaginationParams(pageRequest: PageRequest): HttpParams {
   let httpParams = new HttpParams();
   httpParams = httpParams.append('page', pageRequest.page);
   httpParams = httpParams.append('size', pageRequest.size);

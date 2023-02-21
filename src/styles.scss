@@ -7,9 +7,7 @@ html {
 body {
   height: 100%;
   margin: 0;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  background: linear-gradient(107.54deg, #1D2951 0%, rgba(29, 41, 81, 0.8) 100%);
+  background: linear-gradient(107.54deg, #1D2951 0%, rgba(29, 41, 81, 0.8) 100%) no-repeat fixed;
   font-family: 'Inter', sans-serif;
   font-style: normal;
 }

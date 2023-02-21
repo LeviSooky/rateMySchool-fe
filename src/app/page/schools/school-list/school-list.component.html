@@ -1,10 +1,14 @@
 <div class="container table-box">
   <div class="mt-3">
     <div class="input-group mb-3 pt-3">
-      <input type="text" class="search form-control input-search" placeholder="Enter your search here..."
+      <input type="text" class="search form-control input-search" placeholder="keresés"
              [(ngModel)]="keyword" aria-describedby="button-addon2" (keyup.enter)="search()" >
-      <button class="btn search-btn btn-outline-secondary" type="button"
-              id="button-addon2" (click)="search()">Keresés</button>
+      <div class="row">
+      <button class="btn search-btn btn-outline-secondary col" type="button"
+              id="search-button" (click)="search()">Keresés</button>
+      <button class="btn search-btn btn-outline-secondary col" type="button"
+              id="create-button" (click)="openCreationModal()">Létrehozás</button>
+      </div>
     </div>
   </div>
   <div class="table-responsive">
@@ -20,7 +24,7 @@
       <ng-container *ngIf="schools.length > 0">
         <tr *ngFor="let school of schools; let i = index" (dblclick)="openSchool(i)">
           <td class="text-center">{{school.name}}</td>
-          <td class="text-center">{{school.websiteUrl}}</td>
+          <td class="text-center"> <a class="link-primary" target="_blank" [routerLink]="'https://' + school.websiteUrl">{{school.websiteUrl}}</a></td>
           <td class="text-center">{{school?.address}}</td>
         </tr>
       </ng-container>
@@ -33,24 +37,129 @@
     </table>
     <nav class="pager" *ngIf="getPageable().totalElements">
       <ul class="pagination">
-        <li class="page-item">
-          <a class="page-link" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
-          </a>
+        <li class="page-item" *ngIf="getPageable().page > 0">
+          <button class="page-link" aria-label="Previous" (click)="toPage(0)">
+            &laquo;
+          </button>
         </li>
-        <li class="page-item"><a class="page-link active" href="#">{{getPageable().page + 1}}</a></li>
+        <li *ngIf="getPageable().page > 0" class="page-item">
+          <button class="page-link" (click)="toPage(getPageable().page - 1)">{{getPageable().page}}</button>
+        </li>
+        <li *ngIf="hasNextPage()" class="page-item active">
+          <button class="page-link">{{getPageable().page + 1}}</button>
+        </li>
+        <li *ngIf="getPageable().page === getPageable().totalPages - 1" class="page-item active">
+          <button class="page-link">{{getPageable().page + 1}}</button>
+        </li>
         <li *ngIf="hasNextPage()" class="page-item">
-          <a class="page-link">{{getPageable().page + 2}}</a>
+          <button class="page-link" (click)="toPage(getPageable().page + 1)">{{getPageable().page + 2}}</button>
         </li>
-        <li *ngIf="hasNextNextPage()" class="page-item">
-          <a class="page-link" >{{getPageable().page + 3}}</a>
+        <li *ngIf="getPageable().page === 0  && hasNextNextPage()" class="page-item">
+          <button class="page-link" (click)="toPage(getPageable().page + 2)" >{{getPageable().page + 3}}</button>
         </li>
-        <li class="page-item">
-          <a class="page-link" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
-          </a>
+        <li class="page-item" *ngIf="getPageable().page !== getPageable().totalPages - 1">
+          <button class="page-link" (click)="toPage(getPageable().totalPages - 1)" aria-label="Next">
+            &raquo;
+          </button>
         </li>
       </ul>
     </nav>
   </div>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Modal title</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>One fine body&hellip;</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
+
+<ng-template class="modal" #creationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Modal title</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+    <p>
+      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
+      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+    </p>
+    <p>
+      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
+      rutrum faucibus dolor auctor.
+    </p>
+    <p>
+      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>

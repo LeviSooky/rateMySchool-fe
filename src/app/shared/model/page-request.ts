@@ -2,7 +2,7 @@ import {Sort} from "./sort.model";
 
 export class PageRequest {
 
-  static readonly DEFAULT = new PageRequest(0, 20, []);
+  static readonly DEFAULT = new PageRequest(0, 20, [], 0, 0);
   static readonly TOTAL_ELEMENTS_HEADER = 'total-elements';
   static readonly TOTAL_PAGES_HEADER = 'total-pages';
   constructor
@@ -12,10 +12,10 @@ export class PageRequest {
     public sort: Sort[],
     // @ts-ignore
 
-    public totalElements?: number,
+    public totalElements: number,
     // @ts-ignore
 
-    public totalPages?: number,
+    public totalPages: number,
   ) {}
 
   setSort(sort: Sort): void {
