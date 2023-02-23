@@ -17,8 +17,15 @@ export class SchoolService {
   findAllBy(keyword: string, page: PageRequest): Observable<School[]> { //TODO refactor
     let httpParams = getPaginationParams(page);
     return this.http
-      .get<any[]>(`${this.resourceUrl}/search/${keyword}`, { observe: "body", params: httpParams})
-      .pipe(map((res:any[]) => this.convertArray(res)));
+      .get<any[]>(`${this.resourceUrl}/search/${keyword}`, { observe: "response", params: httpParams})
+      .pipe(map((res:HttpResponse<any[]>) => {
+        // @ts-ignore
+        page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
+        // @ts-ignore
+        page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
+        // @ts-ignore
+        return this.convertArray(res.body);
+      }));
   }
 
   findAll(page: PageRequest): Observable<School[]> {

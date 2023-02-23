@@ -2,24 +2,26 @@ import {Sort} from "./sort.model";
 
 export class PageRequest {
 
-  static readonly DEFAULT = new PageRequest(0, 20, [], 0, 0);
   static readonly TOTAL_ELEMENTS_HEADER = 'total-elements';
   static readonly TOTAL_PAGES_HEADER = 'total-pages';
+
+  public page: number = 0;
+  public size: number = 0;
+  public sort: Sort[] = [];
+  public totalElements: number = 0;
+  public totalPages: number = 0;
   constructor
-  (
-    public page: number,
-    public size: number,
-    public sort: Sort[],
-    // @ts-ignore
-
-    public totalElements: number,
-    // @ts-ignore
-
-    public totalPages: number,
-  ) {}
+  () {}
 
   setSort(sort: Sort): void {
     this.sort ? this.sort.push(sort) : this.sort = [sort];
+  }
+
+  toDefault() {
+    this.page = 0;
+    this.totalPages = 0;
+    this.totalElements = 0;
+    this.sort = [];
   }
 
   nextPage(): PageRequest {

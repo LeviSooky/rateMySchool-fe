@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {forkJoin, Subscription, take} from "rxjs";
 import {SchoolService} from "../../../shared/service/school.service";
@@ -6,6 +6,8 @@ import {School} from "../../../shared/model/school.model";
 import {SchoolReviewService} from "../../../shared/service/school-review.service";
 import {PageRequest} from "../../../shared/model/page-request";
 import {SchoolReview} from "../../../shared/model/school-review.model";
+import {Sort, SortDirection} from "../../../shared/model/sort.model";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-school',
@@ -14,6 +16,10 @@ import {SchoolReview} from "../../../shared/model/school-review.model";
 })
 export class SchoolComponent implements OnInit {
 
+  @ViewChild('creationModal', { static: false})
+    // @ts-ignore
+  creationModal;
+
   private sub = new Subscription();
   private id: string = '';
 
@@ -21,11 +27,15 @@ export class SchoolComponent implements OnInit {
   // @ts-ignore
   school: School = null;
   reviews: SchoolReview[] = []; //TODO change it
-  pageReq = PageRequest.DEFAULT;
+  pageReq = new PageRequest();
+  selectedSort?: Sort;
+
+  SortDirection = SortDirection;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
-    private reviewService: SchoolReviewService
+    private reviewService: SchoolReviewService,
+    private modalService: NgbModal,
   ) {}
 
   ngOnInit() {
@@ -40,6 +50,7 @@ export class SchoolComponent implements OnInit {
           .subscribe(({school, reviews}) => {
             this.school = school;
             this.reviews = reviews;
+            this.pageReq = Object.assign({} as PageRequest, this.pageReq);
         })
 
       });
@@ -53,22 +64,51 @@ export class SchoolComponent implements OnInit {
     return this.pageReq;
   }
 
-  hasNextPage() {
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 1;
-  }
-
-  hasNextNextPage() {
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 2;
-  }
-
-  toPage(pageNumber: number) {
-    this.getPageable().page = pageNumber;
-    this.searchReviews();
-  }
-
   searchReviews() {
     this.reviewService.findAllActiveBy(this.school.id, this.getPageable())
       .pipe(take(1))
-      .subscribe(result => this.reviews = result);
+      .subscribe(result => {
+        this.reviews = result;
+        this.pageReq = Object.assign({} as PageRequest, this.pageReq);
+      });
+  }
+
+  sort(field: string, direction: SortDirection) {
+    let sort = new Sort(field, direction);
+    this.pageReq.sort = [sort];
+    this.selectedSort = sort;
+    this.searchReviews();
+  }
+
+  sortA(event: any) {
+    console.log(event.target.value)
+    let sort: Sort;
+    switch (Number.parseInt(event.target.value)) {
+      case 0:
+        return;
+      case 1:
+        sort = new Sort('stars', SortDirection.ASC);
+        console.log(sort)
+        break;
+      case 2:
+        sort = new Sort('stars', SortDirection.DESC);
+        break;
+      case 3:
+        sort = new Sort('creationDate', SortDirection.ASC);
+        break;
+      case 4:
+        sort = new Sort('creationDate', SortDirection.DESC);
+        break;
+    }
+    // @ts-ignore
+    console.log(sort)
+    // @ts-ignore
+    this.pageReq.sort = [sort];
+    this.searchReviews();
+  }
+
+  openCreationModal() {
+    this.modalService.open(this.creationModal,
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true})
   }
 }

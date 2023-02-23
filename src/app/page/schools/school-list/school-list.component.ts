@@ -6,6 +6,7 @@ import {take} from "rxjs";
 import {Router} from "@angular/router";
 import {DOCUMENT} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Sort, SortDirection} from "../../../shared/model/sort.model";
 
 @Component({
   selector: 'app-school-list',
@@ -19,8 +20,11 @@ export class SchoolListComponent implements OnInit {
   creationModal;
 
   keyword: string = '';
+  lastSearch: string = '';
   schools: School[] = [];
-  private pageRequest: PageRequest = PageRequest.DEFAULT;
+  currentSort?: Sort;
+  SortDirection = SortDirection;
+  pageRequest: PageRequest = new PageRequest();
   constructor(
     private schoolService: SchoolService,
     private router: Router,
@@ -33,7 +37,7 @@ export class SchoolListComponent implements OnInit {
       .pipe(take(1))
       .subscribe(result => {
         this.schools = result;
-        console.log(this.getPageable())
+        this.pageRequest = Object.assign(new PageRequest(), this.pageRequest);
     })
   }
 
@@ -42,13 +46,40 @@ export class SchoolListComponent implements OnInit {
   }
 
   search(): void {
-    this.keyword === '' ?
-      this.schoolService.findAll(this.getPageable())
+    if (this.keyword !== '') {
+      if (this.keyword !== this.lastSearch) {
+        this.pageRequest.toDefault();
+        this.clearCurrentSort();
+      }
+      this.lastSearch = this.keyword;
+      this.schoolService.findAllBy(this.keyword, this.getPageable())
         .pipe(take(1))
-        .subscribe(result => this.schools = result)
-      : this.schoolService.findAllBy(this.keyword, this.getPageable())
-        .pipe(take(1))
-        .subscribe(result => this.schools = result)  }
+        .subscribe(result => {
+          this.schools = result;
+          console.log(this.pageRequest)
+          this.pageRequest = Object.assign(new PageRequest(), this.pageRequest);
+        })
+    } else {
+        if (this.lastSearch !== '') {
+          this.lastSearch = '';
+          this.clearCurrentSort()
+        }
+        this.schoolService.findAll(this.getPageable())
+          .pipe(take(1))
+          .subscribe(result => {
+            this.schools = result;
+            console.log(this.pageRequest)
+            this.pageRequest = Object.assign(new PageRequest(), this.pageRequest);
+          })
+    }
+    window.scrollTo(0, 0);
+  }
+
+
+  clearCurrentSort() {
+    //@ts-ignore
+    this.currentSort = null;
+  }
 
   openSchool(index: number) {
     let id = this.schools[index].id;
@@ -56,22 +87,22 @@ export class SchoolListComponent implements OnInit {
     this.router.navigate(['/schools/', id]);
   }
 
-  toPage(pageNumber: number) {
-    this.getPageable().page = pageNumber;
-    this.search();
-  }
-
-  hasNextPage(): boolean {
-    // @ts-ignore
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 1;
-  }
-
-  hasNextNextPage(): boolean { //TODO rename
-    // @ts-ignore
-    return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 2;
-  }
-
   openCreationModal() {
-    this.modalService.open(this.creationModal, {backdrop: false, keyboard: false, size: 'xl', animation: true})
+    this.modalService.open(this.creationModal,
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true})
+  }
+
+  sort(field: string) {
+    let index = this.pageRequest.sort.findIndex(sort => sort.field === field);
+    if (index === -1) {
+      this.pageRequest.sort = [new Sort(field, SortDirection.ASC)];
+    } else {
+      this.pageRequest.sort[index].direction =
+        this.pageRequest.sort[index].direction === SortDirection.ASC
+          ? SortDirection.DESC
+          : SortDirection.ASC;
+    }
+    this.currentSort = this.pageRequest.sort[0]; //TODO think
+    this.search();
   }
 }

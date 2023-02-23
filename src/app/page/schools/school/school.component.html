@@ -24,9 +24,33 @@
         <thead>
           <tr>
             <th class="text-start">
-              Értékelések
+              <div class="btn-container">
+                <h6 class="mt-auto">Értékelések</h6>
+                <button class="btn search-btn btn-outline-secondary col" type="button"
+                        id="create-button" (click)="openCreationModal()">Értékelés</button>
+              </div>
             </th>
-            <th></th>
+            <th>
+              <select class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortA($event)">
+                <option [attr.selected]="!selectedSort" value="0">Rendezés</option>
+                <option
+                  [attr.selected]=" selectedSort && selectedSort?.field === 'stars' && selectedSort?.direction === SortDirection.ASC"
+                  value="1">Csillagok szerint növekvő
+                </option>
+                <option
+                  [attr.selected]="selectedSort && selectedSort?.field === 'stars' && selectedSort?.direction === SortDirection.DESC"
+                  value="2">Csillagok szerint csökkenő
+                </option>
+                <option
+                  [attr.selected]="selectedSort && selectedSort?.field === 'creationDate' && selectedSort?.direction === SortDirection.ASC"
+                  value="3">Dátum szerint növekvő
+                </option>
+                <option
+                  [attr.selected]="selectedSort && selectedSort?.field === 'creationDate' && selectedSort?.direction === SortDirection.DESC"
+                  value="4">Dátum szerint csökkenő
+                </option>
+              </select>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -36,40 +60,13 @@
           </td>
           <td class="rating">
             <ngb-rating [rate]="review.stars" [starTemplate]="t" [max]="5" [readonly]="true"></ngb-rating>
-            <div class="sticky-bottom">{{review.creationDate?.toDate() | date: 'YYYY-MMM-dd'}}</div>
+            <div class="sticky-bottom">{{review.creationDate.toDate() | date: 'YYYY-MMM-dd'}}</div>
           </td>
         </tr>
         </tbody>
       </table>
-      <nav class="pager" *ngIf="getPageable().totalElements">
-        <ul class="pagination">
-          <li class="page-item" *ngIf="getPageable().page > 0">
-            <button class="page-link" aria-label="Previous" (click)="toPage(0)">
-              &laquo;
-            </button>
-          </li>
-          <li *ngIf="getPageable().page > 0" class="page-item">
-            <button class="page-link" (click)="toPage(getPageable().page - 1)">{{getPageable().page}}</button>
-          </li>
-          <li *ngIf="hasNextPage()" class="page-item active">
-            <button class="page-link">{{getPageable().page + 1}}</button>
-          </li>
-          <li *ngIf="getPageable().page === getPageable().totalPages - 1" class="page-item active">
-            <button class="page-link">{{getPageable().page + 1}}</button>
-          </li>
-          <li *ngIf="hasNextPage()" class="page-item">
-            <button class="page-link" (click)="toPage(getPageable().page + 1)">{{getPageable().page + 2}}</button>
-          </li>
-          <li *ngIf="getPageable().page === 0  && hasNextNextPage()" class="page-item">
-            <button class="page-link" (click)="toPage(getPageable().page + 2)" >{{getPageable().page + 3}}</button>
-          </li>
-          <li class="page-item" *ngIf="getPageable().page !== getPageable().totalPages - 1">
-            <button class="page-link" (click)="toPage(getPageable().totalPages - 1)" aria-label="Next">
-              &raquo;
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <app-pager [(pageReq)]="pageReq" (pageChange)="searchReviews()">
+      </app-pager>
     </div>
   </div>
 </div>
@@ -78,6 +75,32 @@
   <i class="bi-star-fill">
     <i *ngIf="fill > 0" class="bi-star-fill filled" [style.width.%]="fill"></i>
   </i>
+</ng-template>
+
+<ng-template class="modal" #creationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Értékelés hozzáadása</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="row g-3">
+      <div class="col-md-6">
+        <label for="inputEmail4" class="form-label">Email</label>
+        <input type="email" class="form-control" id="inputEmail4">
+      </div>
+      <div class="col-md-6">
+        <label for="inputPassword4" class="form-label">Password</label>
+        <input type="password" class="form-control" id="inputPassword4">
+      </div>
+      <div class="form">
+        <label for="floatingTextarea2">Comments</label>
+        <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" rows="12"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Küldés</button>
+  </div>
 </ng-template>
 
 

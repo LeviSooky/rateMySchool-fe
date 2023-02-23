@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
 @import "~bootstrap-icons/font/bootstrap-icons.css";
+@import "variables";
 
 html {
   height: 100%;
@@ -19,4 +20,17 @@ body {
   background-attachment: fixed;
   border-radius: 20px;
 }
+
+.modal {
+  color: $white;
+}
+
+.modal-header button {
+  color: $white;
+}
+
+.modal-header, .modal-footer, .modal-body {
+  background-color: $blue;
+}
+
 

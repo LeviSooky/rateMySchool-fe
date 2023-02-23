@@ -39,17 +39,20 @@ tbody {
   font-weight: lighter !important;
 }
 
-nav li button {
-  background-color: $blue;
+#create-button {
+  background-color: $green;
+  max-width: 150px;
+  margin-left: auto;
+  margin-right: 0;
+  margin-bottom: -2px;
   color: $white;
 }
 
-nav li button:focus {
-  outline: none;
-  box-shadow: none;
+.form-select-sm {
+  height: 35px;
 }
 
-.pager {
+.btn-container {
   display: flex;
-  justify-content: flex-end;
 }
+

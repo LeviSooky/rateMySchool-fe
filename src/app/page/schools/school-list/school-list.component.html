@@ -15,7 +15,14 @@
     <table class="table table-hover">
       <thead>
       <tr>
-        <th class="text-center">Név</th>
+        <th class="text-center" (click)="sort('name')">
+          Név
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'name'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'name'"
+             class="bi bi-arrow-down"></i>
+
+        </th>
         <th class="text-center">Weboldal</th>
         <th class="text-center">Cím</th>
       </tr>
@@ -35,35 +42,7 @@
       </ng-container>
       </tbody>
     </table>
-    <nav class="pager" *ngIf="getPageable().totalElements">
-      <ul class="pagination">
-        <li class="page-item" *ngIf="getPageable().page > 0">
-          <button class="page-link" aria-label="Previous" (click)="toPage(0)">
-            &laquo;
-          </button>
-        </li>
-        <li *ngIf="getPageable().page > 0" class="page-item">
-          <button class="page-link" (click)="toPage(getPageable().page - 1)">{{getPageable().page}}</button>
-        </li>
-        <li *ngIf="hasNextPage()" class="page-item active">
-          <button class="page-link">{{getPageable().page + 1}}</button>
-        </li>
-        <li *ngIf="getPageable().page === getPageable().totalPages - 1" class="page-item active">
-          <button class="page-link">{{getPageable().page + 1}}</button>
-        </li>
-        <li *ngIf="hasNextPage()" class="page-item">
-          <button class="page-link" (click)="toPage(getPageable().page + 1)">{{getPageable().page + 2}}</button>
-        </li>
-        <li *ngIf="getPageable().page === 0  && hasNextNextPage()" class="page-item">
-          <button class="page-link" (click)="toPage(getPageable().page + 2)" >{{getPageable().page + 3}}</button>
-        </li>
-        <li class="page-item" *ngIf="getPageable().page !== getPageable().totalPages - 1">
-          <button class="page-link" (click)="toPage(getPageable().totalPages - 1)" aria-label="Next">
-            &raquo;
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <app-pager [(pageReq)]="pageRequest" (pageChange)="search()"></app-pager>
   </div>
 </div>
 
@@ -86,78 +65,70 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
-    <p>
-      Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-      Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-    </p>
-    <p>
-      Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus vel augue laoreet
-      rutrum faucibus dolor auctor.
-    </p>
-    <p>
-      Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-      Donec sed odio dui. Donec ullamcorper nulla non metus auctor fringilla.
-    </p>
+    <form class="row g-3 needs-validation" novalidate>
+      <div class="col-md-4">
+        <label for="validationCustom01" class="form-label">First name</label>
+        <input type="text" class="form-control" id="validationCustom01" value="Mark" required>
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="validationCustom02" class="form-label">Last name</label>
+        <input type="text" class="form-control" id="validationCustom02" value="Otto" required>
+        <div class="valid-feedback">
+          Looks good!
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="validationCustomUsername" class="form-label">Username</label>
+        <div class="input-group has-validation">
+          <span class="input-group-text" id="inputGroupPrepend">@</span>
+          <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>
+          <div class="invalid-feedback">
+            Please choose a username.
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label for="validationCustom03" class="form-label">City</label>
+        <input type="text" class="form-control" id="validationCustom03" required>
+        <div class="invalid-feedback">
+          Please provide a valid city.
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label for="validationCustom04" class="form-label">State</label>
+        <select class="form-select" id="validationCustom04" required>
+          <option selected disabled value="">Choose...</option>
+          <option>...</option>
+        </select>
+        <div class="invalid-feedback">
+          Please select a valid state.
+        </div>
+      </div>
+      <div class="col-md-3">
+        <label for="validationCustom05" class="form-label">Zip</label>
+        <input type="text" class="form-control" id="validationCustom05" required>
+        <div class="invalid-feedback">
+          Please provide a valid zip.
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+          <label class="form-check-label" for="invalidCheck">
+            Agree to terms and conditions
+          </label>
+          <div class="invalid-feedback">
+            You must agree before submitting.
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Submit form</button>
+      </div>
+    </form>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
