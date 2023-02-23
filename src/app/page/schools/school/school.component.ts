@@ -81,14 +81,12 @@ export class SchoolComponent implements OnInit {
   }
 
   sortA(event: any) {
-    console.log(event.target.value)
     let sort: Sort;
     switch (Number.parseInt(event.target.value)) {
       case 0:
         return;
       case 1:
         sort = new Sort('stars', SortDirection.ASC);
-        console.log(sort)
         break;
       case 2:
         sort = new Sort('stars', SortDirection.DESC);
@@ -100,8 +98,6 @@ export class SchoolComponent implements OnInit {
         sort = new Sort('creationDate', SortDirection.DESC);
         break;
     }
-    // @ts-ignore
-    console.log(sort)
     // @ts-ignore
     this.pageReq.sort = [sort];
     this.searchReviews();

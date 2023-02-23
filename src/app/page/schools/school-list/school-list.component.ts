@@ -56,7 +56,6 @@ export class SchoolListComponent implements OnInit {
         .pipe(take(1))
         .subscribe(result => {
           this.schools = result;
-          console.log(this.pageRequest)
           this.pageRequest = Object.assign(new PageRequest(), this.pageRequest);
         })
     } else {
@@ -68,7 +67,6 @@ export class SchoolListComponent implements OnInit {
           .pipe(take(1))
           .subscribe(result => {
             this.schools = result;
-            console.log(this.pageRequest)
             this.pageRequest = Object.assign(new PageRequest(), this.pageRequest);
           })
     }

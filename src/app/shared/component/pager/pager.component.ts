@@ -6,7 +6,7 @@ import {PageRequest} from "../../model/page-request";
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss']
 })
-export class PagerComponent implements OnChanges{
+export class PagerComponent {
 
   @Input()
   pageReq!: PageRequest;
@@ -31,9 +31,5 @@ export class PagerComponent implements OnChanges{
 
   hasNextNextPage() {
     return this.getPageable()?.totalPages && this.getPageable().totalPages > this.getPageable()?.page + 2;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('pagerben', this.pageReq)
   }
 }
