@@ -6,6 +6,7 @@ import {HttpClient} from "@angular/common/http";
 import {SharedModule} from "../../shared/shared.module";
 import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
+import {ToastsContainer} from "../../shared/component/toast/toast-container.component";
 
 
 @NgModule({
@@ -16,15 +17,15 @@ import {CommonModule} from "@angular/common";
     imports: [
         CommonModule,
         SharedModule,
-        FormsModule,
         RouterModule.forChild([
-        {
-          path: '', pathMatch: 'full', component: SchoolListComponent
-        },
-        {
-          path: ':id', component: SchoolComponent,
-        }
-      ]),
+            {
+                path: '', pathMatch: 'full', component: SchoolListComponent
+            },
+            {
+                path: ':id', component: SchoolComponent,
+            }
+        ]),
+        ToastsContainer,
 
     ],
   providers: [HttpClient]

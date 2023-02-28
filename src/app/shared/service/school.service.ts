@@ -33,11 +33,8 @@ export class SchoolService {
     return this.http
       .get<any[]>(`${this.resourceUrl}/search`, { observe: "response", params: httpParams})
       .pipe(map((res:HttpResponse<any[]>) => {
-        // @ts-ignore
         page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
-        // @ts-ignore
         page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        // @ts-ignore
         return this.convertArray(res.body);
       }));
   }
@@ -45,26 +42,22 @@ export class SchoolService {
   create(school: School): Observable<School> {
     return this.http
       .post(this.resourceUrl, school, { observe: 'body'})
-      .pipe(map((res: any) => this.convert(res)));
+      .pipe(map((res: any) => convertSchool(res)));
   }
 
   findBy(id: string): Observable<School> {
     return this.http
       .get(`${this.resourceUrl}/${id}`, { observe: 'body'})
-      .pipe(map((res: any) => this.convert(res)));
+      .pipe(map((res: any) => convertSchool(res)));
   }
 
   update(school: School): Observable<School> {
     return this.http
       .put(this.resourceUrl, school, { observe: 'body'})
-      .pipe(map((res: any) => this.convert(res)));
-  }
-
-  convert(data: any): School {
-    return new School(data.id, data.name, data.websiteUrl);
+      .pipe(map((res: any) => convertSchool(res)));
   }
   convertArray(data: any[]): School[] {
-    return data?.map(entry => this.convert(entry));
+    return data?.map(entry => convertSchool(entry));
   }
 }
 
@@ -76,4 +69,10 @@ export function getPaginationParams(pageRequest: PageRequest): HttpParams {
     httpParams = httpParams.append('sort', `${sort.field},${sort.direction}`);
   });
   return httpParams;
+}
+
+export function convertSchool(data: any): School {
+  let school = new School(data.id, data.name, data.websiteUrl);
+  school.image = data.image;
+  return school;
 }

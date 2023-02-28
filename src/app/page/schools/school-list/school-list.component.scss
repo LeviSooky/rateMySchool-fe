@@ -4,26 +4,9 @@ th {
   color: $white;
 }
 
-.no-result {
-  color: $white;
-  height: 500px;
-  vertical-align: middle;
-}
-
 .pager {
   display: flex;
   justify-content: flex-end;
-}
-
-.search-btn {
-  color: #FFE3D8;
-  background-color: #1D2951;
-  margin-left: 15px !important;
-  border-radius: 10px !important;
-}
-
-.input-search {
-  border-radius: 10px !important;
 }
 
 nav li button {
@@ -34,9 +17,4 @@ nav li button {
 nav li button:focus {
   outline: none;
   box-shadow: none;
-}
-
-#create-button {
-  background-color: $green;
-  margin-right: 12px;
 }

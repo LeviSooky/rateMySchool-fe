@@ -1,10 +1,10 @@
 <div class="container table-box">
   <div class="mt-3 pt-3">
-    <div class="row pt-3">
+    <div class="row pt-3" *ngIf="school">
       <div class="col-sm-4">
-        <img  src="assets/school.jpg" alt="school image" class="img-thumbnail">
+        <img #schoolImg [src]="this.getBaseUrl() + '/api/image/' + school.id" alt="school image" class="img-thumbnail" (error)="toDefaultImage(schoolImg)">
       </div>
-      <div *ngIf="school" class="col-sm-8">
+      <div class="col-sm-8">
         <div class="d-flex mt-2">
           <h5 class="title">Név:</h5>
           <h5 class="px-2">{{school.name}}</h5>
@@ -31,7 +31,7 @@
               </div>
             </th>
             <th>
-              <select class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortA($event)">
+              <select *ngIf="reviews && reviews.length > 0 " class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortA($event)">
                 <option [attr.selected]="!selectedSort" value="0">Rendezés</option>
                 <option
                   [attr.selected]=" selectedSort && selectedSort?.field === 'stars' && selectedSort?.direction === SortDirection.ASC"
@@ -63,6 +63,11 @@
             <div class="sticky-bottom">{{review.creationDate.toDate() | date: 'YYYY-MMM-dd'}}</div>
           </td>
         </tr>
+        <ng-container *ngIf="reviews.length === 0">
+          <td colspan="2" class="text-center no-result">
+            Az adott iskolához még nem írtak értékelést!
+          </td>
+        </ng-container>
         </tbody>
       </table>
       <app-pager [(pageReq)]="pageReq" (pageChange)="searchReviews()">
@@ -87,10 +92,6 @@
       <div class="col-md-6">
         <label for="inputEmail4" class="form-label">Email</label>
         <input type="email" class="form-control" id="inputEmail4">
-      </div>
-      <div class="col-md-6">
-        <label for="inputPassword4" class="form-label">Password</label>
-        <input type="password" class="form-control" id="inputPassword4">
       </div>
       <div class="form">
         <label for="floatingTextarea2">Comments</label>

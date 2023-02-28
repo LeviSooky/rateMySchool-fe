@@ -2,9 +2,11 @@ import {Moment} from "moment/moment";
 
 export class TeacherReview {
   constructor(
+    public id: string,
     public stars: number,
     public content: string,
-    public date?: Moment
+    public creationDate?: Moment,
+    public status?: string,
   ) {
 
   }

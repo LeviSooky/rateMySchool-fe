@@ -4,19 +4,24 @@ import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
 import { PagerComponent } from './component/pager/pager.component';
 import {CommonModule} from "@angular/common";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { DomainPipe } from './pipe/domain.pipe';
 
 @NgModule( {
   declarations: [
 
 
-    PagerComponent
+    PagerComponent,
+        DomainPipe
   ],
   imports: [
     NgbToastModule,
     NgbModalModule,
     NgbModule,
     CommonModule,
-    NgbRatingModule
+    NgbRatingModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   exports: [
     NgbToastModule,
@@ -24,6 +29,9 @@ import {CommonModule} from "@angular/common";
     NgbRatingModule,
     NgbModalModule,
     PagerComponent,
+    ReactiveFormsModule,
+    FormsModule,
+    DomainPipe
   ],
   providers: [
     {

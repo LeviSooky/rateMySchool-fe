@@ -5,10 +5,9 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {NavBarComponent} from './shared/component/nav-bar/nav-bar.component';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from "@angular/common/http";
-import {BaseUrlInterceptor} from "./shared/interceptor/base-url.interceptor";
-import {environment} from "../environments/environment";
+import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SharedModule} from "./shared/shared.module";
+import {ToastsContainer} from "./shared/component/toast/toast-container.component";
 
 @NgModule({
   declarations: [
@@ -20,7 +19,8 @@ import {SharedModule} from "./shared/shared.module";
     HttpClientModule,
     AppRoutingModule,
     SharedModule,
-    NgbModule
+    NgbModule,
+    ToastsContainer
   ],
   providers: [
     HttpClient,

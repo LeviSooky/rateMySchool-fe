@@ -8,6 +8,8 @@ import {PageRequest} from "../../../shared/model/page-request";
 import {SchoolReview} from "../../../shared/model/school-review.model";
 import {Sort, SortDirection} from "../../../shared/model/sort.model";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {DomSanitizer} from "@angular/platform-browser";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-school',
@@ -36,6 +38,7 @@ export class SchoolComponent implements OnInit {
     private schoolService: SchoolService,
     private reviewService: SchoolReviewService,
     private modalService: NgbModal,
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit() {
@@ -58,6 +61,10 @@ export class SchoolComponent implements OnInit {
 
   getByRating(): string {
     return '';//TODO
+  }
+
+  getBaseUrl() {
+    return environment.apiUrl;
   }
 
   getPageable() {
@@ -106,5 +113,9 @@ export class SchoolComponent implements OnInit {
   openCreationModal() {
     this.modalService.open(this.creationModal,
       {backdrop: "static", keyboard: false, size: 'xl', animation: true})
+  }
+
+  toDefaultImage(schoolImg: HTMLImageElement) {
+    schoolImg.src = 'assets/school.jpg';
   }
 }

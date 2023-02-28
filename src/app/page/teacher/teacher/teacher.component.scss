@@ -1,0 +1,61 @@
+.img-thumbnail {
+  height: 240px;
+}
+@import 'variables.scss';
+
+th {
+  color: $white;
+}
+
+.title {
+  color: $white;
+}
+
+.rating {
+  min-width: 120px;
+}
+
+i {
+  position: relative;
+  display: inline-block;
+  font-size: 1.5rem;
+  padding: 0 2px;
+  padding-right: 0.1rem;
+  color: #d3d3d3;
+}
+
+.filled {
+  color: gold;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+tbody {
+  color: #fff;
+}
+
+.review {
+  font-style: oblique;
+  font-size: 14px;
+  font-weight: lighter !important;
+}
+
+#create-button {
+  background-color: $green;
+  max-width: 150px;
+  margin-left: auto;
+  margin-right: 0;
+  margin-bottom: -2px;
+  color: $white;
+}
+
+.form-select-sm {
+  height: 35px;
+}
+
+.btn-container {
+  display: flex;
+}
+
