@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, ViewEncapsulation} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {forkJoin, Subscription, take} from "rxjs";
 import {SchoolService} from "../../../shared/service/school.service";
@@ -10,11 +10,14 @@ import {Sort, SortDirection} from "../../../shared/model/sort.model";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {DomSanitizer} from "@angular/platform-browser";
 import {environment} from "../../../../environments/environment";
+import {FormControl, Validators} from "@angular/forms";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-school',
   templateUrl: './school.component.html',
-  styleUrls: ['./school.component.scss']
+  styleUrls: ['./school.component.scss'],
+  encapsulation: ViewEncapsulation.Emulated,
 })
 export class SchoolComponent implements OnInit {
 
@@ -31,14 +34,19 @@ export class SchoolComponent implements OnInit {
   reviews: SchoolReview[] = []; //TODO change it
   pageReq = new PageRequest();
   selectedSort?: Sort;
+  openedReview: SchoolReview;
+
+  newReview = new FormControl('', [Validators.required, Validators.minLength(10)])
 
   SortDirection = SortDirection;
+  processingReview: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
     private reviewService: SchoolReviewService,
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
+    private spinnerService: NgxSpinnerService,
   ) {}
 
   ngOnInit() {
@@ -117,5 +125,18 @@ export class SchoolComponent implements OnInit {
 
   toDefaultImage(schoolImg: HTMLImageElement) {
     schoolImg.src = 'assets/school.jpg';
+  }
+
+  saveReview(creationModal) {
+    if (this.newReview.valid) {
+      creationModal.close();
+      this.spinnerService.show('spinner')
+      this.reviewService.save(this.school.id, this.newReview.getRawValue())
+        .pipe(take(1))
+        .subscribe(result => {
+          this.spinnerService.hide('spinner')
+        }, () => this.spinnerService.hide('spinner')); //TODO
+      this.newReview.reset();
+    }
   }
 }

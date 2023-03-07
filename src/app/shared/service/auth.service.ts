@@ -1,14 +1,15 @@
 import {Injectable} from '@angular/core';
-import {catchError, EMPTY, Observable, Subject, tap} from "rxjs";
-// import jwt_decode from "jwt-decode";
+import {BehaviorSubject, catchError, EMPTY, Observable, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {User} from "../model/user.model";
+import jwtDecode from "jwt-decode";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  authUser = new Subject<string>();
+  authUser = new BehaviorSubject<User>(null);
   jwt: string = '';
   decodedToken = {};
   constructor(private http: HttpClient) {}
@@ -17,19 +18,12 @@ export class AuthService {
     return this.http
       .post('api/login', credentials, { observe: 'response'})
       .pipe(tap(response => {
-        let bearer = response.headers.get('Bearer ');
+        let bearer = response.headers.get('Authorization');
         if (bearer !== null) {
-          this.jwt = bearer;
-          // this.decodedToken = jwt_decode(this.jwt);
+          let user = new User(jwtDecode(bearer), bearer);
+          this.authUser.next(user);
         }
       }), catchError(() => EMPTY))
   }
 
-  getJWT(): string {
-    return this.jwt;
-  }
-
-  getDecodedToken(): {} {
-    return this.decodedToken;
-  }
 }

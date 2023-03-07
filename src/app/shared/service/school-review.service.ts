@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {PageRequest} from "../model/page-request";
 import {map, Observable} from "rxjs";
 import {SchoolReview} from "../model/school-review.model";
@@ -24,6 +24,15 @@ export class SchoolReviewService {
         pageReq.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
         return this.convertArray(res.body);
       }));
+  }
+
+  save(schoolId: string, review: string) {
+
+    let params = new HttpParams().set('schoolId', schoolId).set('review', review);
+    return this.http
+      .get(this.baseUrl, { observe: 'body', params: params})
+
+
   }
 
   convert(data: any): SchoolReview {

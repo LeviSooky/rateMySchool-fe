@@ -6,6 +6,8 @@ import { PagerComponent } from './component/pager/pager.component';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { DomainPipe } from './pipe/domain.pipe';
+import {TokenInterceptor} from "./interceptor/token.interceptor";
+import {NgxSpinnerModule} from "ngx-spinner";
 
 @NgModule( {
   declarations: [
@@ -21,7 +23,8 @@ import { DomainPipe } from './pipe/domain.pipe';
     CommonModule,
     NgbRatingModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    NgxSpinnerModule,
   ],
   exports: [
     NgbToastModule,
@@ -31,12 +34,18 @@ import { DomainPipe } from './pipe/domain.pipe';
     PagerComponent,
     ReactiveFormsModule,
     FormsModule,
-    DomainPipe
+    DomainPipe,
+    NgxSpinnerModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: BaseUrlInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
       multi: true
     },
   ],

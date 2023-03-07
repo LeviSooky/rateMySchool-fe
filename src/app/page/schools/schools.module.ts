@@ -7,6 +7,7 @@ import {SharedModule} from "../../shared/shared.module";
 import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {ToastsContainer} from "../../shared/component/toast/toast-container.component";
+import {NgxSpinnerModule} from "ngx-spinner";
 
 
 @NgModule({
@@ -26,6 +27,7 @@ import {ToastsContainer} from "../../shared/component/toast/toast-container.comp
             }
         ]),
         ToastsContainer,
+        NgxSpinnerModule,
 
     ],
   providers: [HttpClient]

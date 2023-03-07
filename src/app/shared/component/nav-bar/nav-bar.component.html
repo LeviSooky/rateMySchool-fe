@@ -18,10 +18,10 @@
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown link
+            Egyéb
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" routerLink="/index">Action</a></li>
+            <li *ngIf="!isLoggedIn()"><a class="dropdown-item" routerLink="/login">Bejelentkezés</a></li>
             <li><a class="dropdown-item" href="#">Another action</a></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>

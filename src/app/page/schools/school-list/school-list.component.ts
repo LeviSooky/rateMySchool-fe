@@ -10,6 +10,7 @@ import {Sort, SortDirection} from "../../../shared/model/sort.model";
 import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
 import {ToastService} from "../../../shared/service/toast.service";
 import {ImageService} from "../../../shared/service/image.service";
+import jwtDecode from "jwt-decode";
 
 @Component({
   selector: 'app-school-list',
@@ -42,6 +43,8 @@ export class SchoolListComponent implements OnInit {
   ) {
   }
   ngOnInit(): void {
+
+    let decoded = jwtDecode('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0M2EzNmFhMy1lMDRjLTQ2MGItOTYzMS00OTkzNjc5NzhhODQiLCJpc3MiOiJjb20ucmF0ZW15c2Nob29sLm1haW4iLCJpYXQiOjE2NzgxODY2MTUsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn0seyJhdXRob3JpdHkiOiJNT0RFUkFUT1IifV0sImV4cCI6MTY3ODE5NTMxNX0.OKZm91t6j64F3tf5JLtK0jy0Hqbj8-FMtlEOH4E9Uf_jjEdMX4SLGl6u-66REmlNlp_9Ske0trvV-FV3Ihfl5Q');
     this.schoolService.findAll(this.pageRequest)
       .pipe(take(1))
       .subscribe(result => {
@@ -54,7 +57,6 @@ export class SchoolListComponent implements OnInit {
       websiteUrl: new FormControl('', [Validators.required, Validators.pattern(this.urlRegex)]),
       image: new FormControl(null)
       })
-    this.formGroup.statusChanges.subscribe(() => console.log(this.name))
   }
   get name(): AbstractControl {
     return this.formGroup.get('name') as AbstractControl;
@@ -137,7 +139,7 @@ export class SchoolListComponent implements OnInit {
             }, () => {
               this.toastService.showError("Valami hiba történt, kérlek próbálkozz később!")
             }) //TODO correct handling
-        })
+        }, () => this.toastService.showError("Valami hiba történt, kérlek próbálkozz később!"))
       this.formGroup.reset();
     }
   }
