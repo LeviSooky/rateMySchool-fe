@@ -23,6 +23,13 @@
              class="bi bi-arrow-down"></i>
 
         </th>
+        <th class="text-center" (click)="sort('avgRating')">
+          Átlag értékelés
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'avgRating'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'avgRating'"
+             class="bi bi-arrow-down"></i>
+        </th>
         <th class="text-center">Weboldal</th>
         <th class="text-center">Cím</th>
       </tr>
@@ -31,6 +38,7 @@
       <ng-container *ngIf="schools.length > 0">
         <tr *ngFor="let school of schools; let i = index" (dblclick)="openSchool(i)">
           <td class="text-center">{{school.name}}</td>
+          <td class="text-center">{{school.avgRating}}</td>
           <td class="text-center">
             <a class="link-primary" (click)="goToLink(school.websiteUrl)">{{school.websiteUrl | domain}}</a>
           </td>

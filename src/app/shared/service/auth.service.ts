@@ -3,6 +3,8 @@ import {BehaviorSubject, catchError, EMPTY, Observable, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../model/user.model";
 import jwtDecode from "jwt-decode";
+import {Router} from "@angular/router";
+import {ToastService} from "./toast.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +14,9 @@ export class AuthService {
   authUser = new BehaviorSubject<User>(null);
   jwt: string = '';
   decodedToken = {};
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private router: Router,
+              private toastService: ToastService) {}
 
   login(credentials: {}): Observable<Object> {
     return this.http
@@ -26,4 +30,9 @@ export class AuthService {
       }), catchError(() => EMPTY))
   }
 
+  logout() {
+    this.authUser.next(null);
+    this.router.navigate(['/login']);
+    this.toastService.showInfoToast("A bejelentkezés lejárt, kérjük jelentkezzen be újra!");
+  }
 }

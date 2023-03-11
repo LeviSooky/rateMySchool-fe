@@ -16,6 +16,10 @@ export class ToastService {
     this.show(text, { classname: 'bg-success text-light', delay: 3000 });
   }
 
+  showInfoToast(text: string) {
+    this.show(text, { classname: 'bg-warning text-light', delay: 3000 });
+  }
+
   showError(text: string) {
     this.show(text, { classname: 'bg-danger text-light', delay: 3000 });
   }

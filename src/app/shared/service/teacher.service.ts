@@ -21,7 +21,7 @@ export class TeacherService {
       .pipe(map((response: HttpResponse<any[]>) => {
         pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return this.convertArray(response.body);
+        return convertArray(response.body);
       }));
   }
 
@@ -32,21 +32,21 @@ export class TeacherService {
       .pipe(map((response: HttpResponse<any[]>) => {
         pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return this.convertArray(response.body);
+        return convertArray(response.body);
       }))
   }
 
   findBy(id: string): Observable<Teacher> {
     return this.http
       .get(`${this.resourceUrl}/${id}`, { observe: 'body'})
-      .pipe(map((res: any) => this.convert(res)));
+      .pipe(map((res: any) => convert(res)));
   }
+}
 
-  convert(data: any): Teacher {
-    return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school));
-  }
+export function convert(data: any): Teacher {
+  return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school));
+}
 
-  convertArray(data: any[]): Teacher[] {
-    return data?.map(entry => this.convert(entry));
-  }
+export function convertArray(data: any[]): Teacher[] {
+  return data?.map(entry => convert(entry));
 }

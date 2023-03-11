@@ -24,7 +24,7 @@ export class SchoolService {
         // @ts-ignore
         page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
         // @ts-ignore
-        return this.convertArray(res.body);
+        return convertArray(res.body);
       }));
   }
 
@@ -35,7 +35,7 @@ export class SchoolService {
       .pipe(map((res:HttpResponse<any[]>) => {
         page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return this.convertArray(res.body);
+        return convertArray(res.body);
       }));
   }
 
@@ -56,9 +56,10 @@ export class SchoolService {
       .put(this.resourceUrl, school, { observe: 'body'})
       .pipe(map((res: any) => convertSchool(res)));
   }
-  convertArray(data: any[]): School[] {
-    return data?.map(entry => convertSchool(entry));
-  }
+}
+
+export function convertArray(data: any[]): School[] {
+  return data?.map(entry => convertSchool(entry));
 }
 
 export function getPaginationParams(pageRequest: PageRequest): HttpParams {
@@ -72,7 +73,6 @@ export function getPaginationParams(pageRequest: PageRequest): HttpParams {
 }
 
 export function convertSchool(data: any): School {
-  let school = new School(data.id, data.name, data.websiteUrl);
-  school.image = data.image;
+  let school = new School(data.id, data.name, data.websiteUrl, data.avgRating);
   return school;
 }

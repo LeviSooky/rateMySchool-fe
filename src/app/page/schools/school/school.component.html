@@ -99,18 +99,58 @@
   </div>
   <div class="modal-body">
     <form class="row g-3">
-      <div class="col-md-6">
-        <label for="inputEmail4" class="form-label">Email</label>
-        <input type="email" class="form-control" id="inputEmail4">
-      </div>
       <div class="form">
-        <label for="floatingTextarea2">Comments</label>
+        <label for="floatingTextarea2">Értékelés</label>
         <textarea [formControl]="newReview" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" rows="12"></textarea>
       </div>
     </form>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-light" (click)="saveReview(modal)">Küldés</button>
+  </div>
+</ng-template>
+
+<ng-template class="modal" #failedModal let-failedModal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Sikertelen értékelés</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="failedModal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    Sajnos az értékelésben olyan dolgokat észleltünk amelyek nem felelnek meg, kérjük gondolja át és próbálja meg újra!
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light align-middle" (click)="failedModal.close()">Rendben</button>
+  </div>
+</ng-template>
+
+<ng-template class="modal" #resourceFailed let-resourceFailed>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Sikertelen értékelés</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="resourceFailed.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    A kiértékelés során hiba történt, így a moderátorainknak kézzel szükséges jóváhagyni az értékelést, a jóváhagyást
+    követően meg fog jelenni az értékelése!
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light align-middle" (click)="resourceFailed.close()">Rendben</button>
+  </div>
+</ng-template>
+
+<ng-template class="modal" #saveSuccess let-saveSuccess>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Sikeres értékelés</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="saveSuccess.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p *ngIf="!wantsToChange">Szerintünk az értékelése ennyi csillagnak felel meg, Egyetért?</p>
+    <p *ngIf="wantsToChange">Válasszd ki az általad gondoltad</p>
+    <ngb-rating [(rate)]="creationResult.stars" [starTemplate]="t" [max]="5" [readonly]="!wantsToChange"></ngb-rating>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="saveSuccess.close(false)">Igen</button>
+    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="changeStars()">Nem</button>
+    <button *ngIf="wantsToChange" type="button" class="btn btn-light align-middle" (click)="saveSuccess.close(true)">Mentés</button>
   </div>
 </ng-template>
 
@@ -123,7 +163,7 @@
 >
   <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
-<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérünk várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
+<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
 
 
 

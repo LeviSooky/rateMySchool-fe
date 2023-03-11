@@ -12,6 +12,9 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {environment} from "../../../../environments/environment";
 import {FormControl, Validators} from "@angular/forms";
 import {NgxSpinnerService} from "ngx-spinner";
+import {EntityStatus} from "../../../shared/enums/entity.status";
+import {AddReviewResponse} from "../../../shared/model/add-review-response.model";
+import {ToastService} from "../../../shared/service/toast.service";
 
 @Component({
   selector: 'app-school',
@@ -22,8 +25,15 @@ import {NgxSpinnerService} from "ngx-spinner";
 export class SchoolComponent implements OnInit {
 
   @ViewChild('creationModal', { static: false})
-    // @ts-ignore
   creationModal;
+
+  @ViewChild('failedModal', { static: false})
+  failedModal;
+
+  @ViewChild('resourceFailed', { static: false})
+  resourceFailed;
+  @ViewChild('saveSuccess', { static: false})
+  saveSuccess;
 
   private sub = new Subscription();
   private id: string = '';
@@ -40,6 +50,8 @@ export class SchoolComponent implements OnInit {
 
   SortDirection = SortDirection;
   processingReview: boolean = false;
+  creationResult: AddReviewResponse;
+  wantsToChange: boolean;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
@@ -47,6 +59,7 @@ export class SchoolComponent implements OnInit {
     private modalService: NgbModal,
     private sanitizer: DomSanitizer,
     private spinnerService: NgxSpinnerService,
+    private toastService: ToastService,
   ) {}
 
   ngOnInit() {
@@ -134,9 +147,35 @@ export class SchoolComponent implements OnInit {
       this.reviewService.save(this.school.id, this.newReview.getRawValue())
         .pipe(take(1))
         .subscribe(result => {
-          this.spinnerService.hide('spinner')
+          this.spinnerService.hide('spinner');
+          this.creationResult = result;
+          switch (result.status) {
+            case EntityStatus.NOT_ACCEPTABLE:
+              this.modalService.open(this.failedModal,
+                {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
+              break;
+            case EntityStatus.SENTIMENT_FAILED || EntityStatus.TRANSLATION_FAILED:
+              this.modalService.open(this.resourceFailed,
+                {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
+              break;
+            default:
+              this.modalService.open(this.saveSuccess,
+                {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
+                .result.then(res => {
+                if (res) {
+                  this.reviewService.modifyStars(result.id, result.stars)
+                    .pipe(take(1))
+                    .subscribe(() => this.toastService.showSuccessToast("Sikeres módosítás!"));
+                }
+              }, () => {})
+              break;
+          }
         }, () => this.spinnerService.hide('spinner')); //TODO
       this.newReview.reset();
     }
+  }
+
+  changeStars() {
+    this.wantsToChange = true;
   }
 }

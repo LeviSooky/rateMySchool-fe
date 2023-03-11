@@ -5,6 +5,7 @@ import {map, Observable} from "rxjs";
 import {SchoolReview} from "../model/school-review.model";
 import {getPaginationParams} from "./school.service";
 import * as moment from "moment/moment";
+import {AddReviewResponse} from "../model/add-review-response.model";
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +27,18 @@ export class SchoolReviewService {
       }));
   }
 
-  save(schoolId: string, review: string) {
+  save(schoolId: string, review: string): Observable<AddReviewResponse> {
 
     let params = new HttpParams().set('schoolId', schoolId).set('review', review);
     return this.http
       .get(this.baseUrl, { observe: 'body', params: params})
+      .pipe(map((res: any) => this.convertResponse(res)));
+  }
 
-
+  modifyStars(reviewId: string, stars: number) {
+    let params = new HttpParams().append('stars', stars);
+    return this.http
+      .get(`${this.baseUrl}/modify/stars/${reviewId}`, { params: params})
   }
 
   convert(data: any): SchoolReview {
@@ -40,5 +46,9 @@ export class SchoolReviewService {
   }
   convertArray(data: any[]): SchoolReview[] {
     return data?.map(entry => this.convert(entry));
+  }
+
+  private convertResponse(res: any): AddReviewResponse {
+    return new AddReviewResponse(res.id, res.stars, res.status);
   }
 }

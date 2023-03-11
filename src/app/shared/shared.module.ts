@@ -2,19 +2,22 @@ import {NgModule} from "@angular/core";
 import {NgbModalModule, NgbModule, NgbRatingModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
-import { PagerComponent } from './component/pager/pager.component';
+import {PagerComponent} from './component/pager/pager.component';
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
-import { DomainPipe } from './pipe/domain.pipe';
+import {DomainPipe} from './pipe/domain.pipe';
 import {TokenInterceptor} from "./interceptor/token.interceptor";
 import {NgxSpinnerModule} from "ngx-spinner";
+import {
+  ReviewNotAcceptableModalComponent
+} from "./modal/review-not-acceptable-modal/review-not-acceptable-modal.component";
 
 @NgModule( {
   declarations: [
 
 
     PagerComponent,
-        DomainPipe
+        DomainPipe,
   ],
   imports: [
     NgbToastModule,
@@ -49,6 +52,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
       multi: true
     },
   ],
+  entryComponents: [ReviewNotAcceptableModalComponent]
   })
 export class SharedModule {
 
