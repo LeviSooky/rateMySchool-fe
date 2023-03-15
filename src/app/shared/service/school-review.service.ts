@@ -23,7 +23,7 @@ export class SchoolReviewService {
         pageReq.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         // @ts-ignore
         pageReq.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return this.convertArray(res.body);
+        return convertSchoolReviewArray(res.body);
       }));
   }
 
@@ -32,7 +32,7 @@ export class SchoolReviewService {
     let params = new HttpParams().set('schoolId', schoolId).set('review', review);
     return this.http
       .get(this.baseUrl, { observe: 'body', params: params})
-      .pipe(map((res: any) => this.convertResponse(res)));
+      .pipe(map((res: any) => convertReviewResponse(res)));
   }
 
   modifyStars(reviewId: string, stars: number) {
@@ -41,14 +41,16 @@ export class SchoolReviewService {
       .get(`${this.baseUrl}/modify/stars/${reviewId}`, { params: params})
   }
 
-  convert(data: any): SchoolReview {
-    return new SchoolReview(data.id, data.content, data.stars, moment(data.creationDate), data.status);
-  }
-  convertArray(data: any[]): SchoolReview[] {
-    return data?.map(entry => this.convert(entry));
-  }
+}
 
-  private convertResponse(res: any): AddReviewResponse {
-    return new AddReviewResponse(res.id, res.stars, res.status);
-  }
+export function convertSchoolReview(data: any): SchoolReview {
+  return new SchoolReview(data.id, data.content, data.stars, moment(data.creationDate), data.status);
+}
+
+export function convertSchoolReviewArray(data: any[]): SchoolReview[] {
+  return data?.map(entry => convertSchoolReview(entry));
+}
+
+export function convertReviewResponse(res: any): AddReviewResponse {
+  return new AddReviewResponse(res.id, res.stars, res.status);
 }

@@ -44,7 +44,6 @@ export class SchoolListComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    let decoded = jwtDecode('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0M2EzNmFhMy1lMDRjLTQ2MGItOTYzMS00OTkzNjc5NzhhODQiLCJpc3MiOiJjb20ucmF0ZW15c2Nob29sLm1haW4iLCJpYXQiOjE2NzgxODY2MTUsInJvbGUiOlt7ImF1dGhvcml0eSI6IkFETUlOIn0seyJhdXRob3JpdHkiOiJNT0RFUkFUT1IifV0sImV4cCI6MTY3ODE5NTMxNX0.OKZm91t6j64F3tf5JLtK0jy0Hqbj8-FMtlEOH4E9Uf_jjEdMX4SLGl6u-66REmlNlp_9Ske0trvV-FV3Ihfl5Q');
     this.schoolService.findAll(this.pageRequest)
       .pipe(take(1))
       .subscribe(result => {

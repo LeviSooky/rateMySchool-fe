@@ -15,6 +15,14 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {EntityStatus} from "../../../shared/enums/entity.status";
 import {AddReviewResponse} from "../../../shared/model/add-review-response.model";
 import {ToastService} from "../../../shared/service/toast.service";
+import {
+  ReviewNotAcceptableModalComponent
+} from "../../../shared/modal/review-not-acceptable-modal/review-not-acceptable-modal.component";
+import {ReviewSuccessComponent} from "../../../shared/modal/review-success/review-success.component";
+import {ResourceFailedComponent} from "../../../shared/modal/resource-failed/resource-failed.component";
+import {AuthService} from "../../../shared/service/auth.service";
+import {User} from "../../../shared/model/user.model";
+import {ModeratorService} from "../../../shared/service/moderator.service";
 
 @Component({
   selector: 'app-school',
@@ -27,14 +35,7 @@ export class SchoolComponent implements OnInit {
   @ViewChild('creationModal', { static: false})
   creationModal;
 
-  @ViewChild('failedModal', { static: false})
-  failedModal;
-
-  @ViewChild('resourceFailed', { static: false})
-  resourceFailed;
-  @ViewChild('saveSuccess', { static: false})
-  saveSuccess;
-
+@ViewChild('t') starTemplate;
   private sub = new Subscription();
   private id: string = '';
 
@@ -45,6 +46,7 @@ export class SchoolComponent implements OnInit {
   pageReq = new PageRequest();
   selectedSort?: Sort;
   openedReview: SchoolReview;
+  EntityStatus = EntityStatus;
 
   newReview = new FormControl('', [Validators.required, Validators.minLength(10)])
 
@@ -52,6 +54,8 @@ export class SchoolComponent implements OnInit {
   processingReview: boolean = false;
   creationResult: AddReviewResponse;
   wantsToChange: boolean;
+  authSub: Subscription;
+  user: User;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
@@ -60,16 +64,21 @@ export class SchoolComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private spinnerService: NgxSpinnerService,
     private toastService: ToastService,
+    private authService: AuthService,
+    private moderatorService: ModeratorService,
   ) {}
 
   ngOnInit() {
+    this.authService.authUser.subscribe(user => {
+      this.user = user;
+    });
     this.route.params
       .pipe(take(1))
       .subscribe(params => {
         this.id = params['id'];
         forkJoin({
           school: this.schoolService.findBy(this.id),
-          reviews: this.reviewService.findAllActiveBy(this.id, this.pageReq)
+          reviews: this.getReviewSearch()
         }).pipe(take(1))
           .subscribe(({school, reviews}) => {
             this.school = school;
@@ -88,12 +97,18 @@ export class SchoolComponent implements OnInit {
     return environment.apiUrl;
   }
 
+  getReviewSearch() {
+    return !this.user
+      ? this.reviewService.findAllActiveBy(this.id, this.pageReq)
+      : this.moderatorService.findSchoolReviewsBy(this.id, this.pageReq);
+  }
+
   getPageable() {
     return this.pageReq;
   }
 
   searchReviews() {
-    this.reviewService.findAllActiveBy(this.school.id, this.getPageable())
+    this.getReviewSearch()
       .pipe(take(1))
       .subscribe(result => {
         this.reviews = result;
@@ -108,7 +123,7 @@ export class SchoolComponent implements OnInit {
     this.searchReviews();
   }
 
-  sortA(event: any) {
+  sortReviews(event: any) {
     let sort: Sort;
     switch (Number.parseInt(event.target.value)) {
       case 0:
@@ -132,12 +147,22 @@ export class SchoolComponent implements OnInit {
   }
 
   openCreationModal() {
+    this.newReview.reset();
     this.modalService.open(this.creationModal,
       {backdrop: "static", keyboard: false, size: 'xl', animation: true})
   }
 
   toDefaultImage(schoolImg: HTMLImageElement) {
     schoolImg.src = 'assets/school.jpg';
+  }
+
+  moderate(reviewId: string, shouldActivate: boolean) {
+    this.moderatorService.moderateSchoolReview(reviewId, shouldActivate)
+      .pipe(take(1))
+      .subscribe({
+        error: () => this.toastService.showError("Valami hiba történt!"),
+        complete: () => this.toastService.showSuccessToast(`Sikeres ${ shouldActivate ? 'aktíválás' : 'törlés'} !`)
+      })
   }
 
   saveReview(creationModal) {
@@ -151,31 +176,27 @@ export class SchoolComponent implements OnInit {
           this.creationResult = result;
           switch (result.status) {
             case EntityStatus.NOT_ACCEPTABLE:
-              this.modalService.open(this.failedModal,
+              this.modalService.open(ReviewNotAcceptableModalComponent,
                 {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
               break;
             case EntityStatus.SENTIMENT_FAILED || EntityStatus.TRANSLATION_FAILED:
-              this.modalService.open(this.resourceFailed,
+              this.modalService.open(ResourceFailedComponent,
                 {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
               break;
             default:
-              this.modalService.open(this.saveSuccess,
-                {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true})
-                .result.then(res => {
-                if (res) {
-                  this.reviewService.modifyStars(result.id, result.stars)
-                    .pipe(take(1))
-                    .subscribe(() => this.toastService.showSuccessToast("Sikeres módosítás!"));
-                }
+              let ngbModalRef = this.modalService.open(ReviewSuccessComponent,
+                {backdrop: "static", keyboard: false, size: 'lg', animation: true, centered:true});
+              ngbModalRef.componentInstance.reviewResponse = result;
+              ngbModalRef.componentInstance.startTemplate = this.starTemplate;
+              ngbModalRef.result.then(() => {
+                this.reviewService.modifyStars(result.id, result.stars)
+                  .pipe(take(1))
+                  .subscribe(() => this.toastService.showSuccessToast("Sikeres módosítás!"));
               }, () => {})
               break;
           }
         }, () => this.spinnerService.hide('spinner')); //TODO
       this.newReview.reset();
     }
-  }
-
-  changeStars() {
-    this.wantsToChange = true;
   }
 }

@@ -6,5 +6,6 @@ export class Teacher {
     public name?: string,
     public isMale?: boolean,
     public school?: School,
+    public avgRating?: number,
   ) {}
 }

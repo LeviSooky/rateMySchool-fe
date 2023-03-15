@@ -15,8 +15,8 @@
           <h5 class="px-2">{{school.websiteUrl}}</h5>
         </div>
         <div class="d-flex mt-2">
-          <h5 class="title">Kitalálni az egyebet:</h5>
-          <h5 class="px-2">{{school.name}}</h5>
+          <h5 class="title">Átlag Értékelés:</h5>
+          <h5 class="px-2">{{school.avgRating | number: '1.0-2'}}</h5>
         </div>
       </div>
     </div>
@@ -24,6 +24,7 @@
       <table class="table">
         <thead>
           <tr>
+            <th *ngIf="user" class="text-start"><h6 class="mt-auto">Funkciók</h6></th>
             <th class="text-start">
               <div class="btn-container">
                 <h6 class="mt-auto">Értékelések</h6>
@@ -32,7 +33,7 @@
               </div>
             </th>
             <th>
-              <select *ngIf="reviews && reviews.length > 0 " class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortA($event)">
+              <select *ngIf="reviews && reviews.length > 0 " class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortReviews($event)">
                 <option [attr.selected]="!selectedSort" value="0">Rendezés</option>
                 <option
                   [attr.selected]=" selectedSort && selectedSort?.field === 'stars' && selectedSort?.direction === SortDirection.ASC"
@@ -55,16 +56,16 @@
           </tr>
         </thead>
         <tbody>
-<!--        <tr>-->
-<!--          <td class="review align-items-lg-end">-->
-<!--            {{'ASD'}}-->
-<!--          </td>-->
-<!--          <td class="rating">-->
-<!--            <ngb-rating [rate]="3.36" [starTemplate]="t" [max]="5" [readonly]="false"></ngb-rating>-->
-<!--            <div class="sticky-bottom"></div>-->
-<!--          </td>-->
-<!--        </tr>-->
         <tr *ngFor="let review of reviews">
+          <td *ngIf="user">
+            <button *ngIf="review.status !== EntityStatus.ACTIVE" ngbTooltip="aktiválás" placement="start" class="btn-sm bg-success" (click)="moderate(review.id, true)">
+              <i class="bi bi-check-square-fill"></i>
+            </button>
+            <button *ngIf="review.status === EntityStatus.ACTIVE" ngbTooltip="törlés" placement="start" class="bg-danger" (click)="moderate(review.id, false)">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+
+          </td>
           <td class="review align-items-lg-end">
             {{review.content}}
           </td>
@@ -110,50 +111,6 @@
   </div>
 </ng-template>
 
-<ng-template class="modal" #failedModal let-failedModal>
-  <div class="modal-header">
-    <h4 class="modal-title text-center">Sikertelen értékelés</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="failedModal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    Sajnos az értékelésben olyan dolgokat észleltünk amelyek nem felelnek meg, kérjük gondolja át és próbálja meg újra!
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-light align-middle" (click)="failedModal.close()">Rendben</button>
-  </div>
-</ng-template>
-
-<ng-template class="modal" #resourceFailed let-resourceFailed>
-  <div class="modal-header">
-    <h4 class="modal-title text-center">Sikertelen értékelés</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="resourceFailed.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    A kiértékelés során hiba történt, így a moderátorainknak kézzel szükséges jóváhagyni az értékelést, a jóváhagyást
-    követően meg fog jelenni az értékelése!
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-light align-middle" (click)="resourceFailed.close()">Rendben</button>
-  </div>
-</ng-template>
-
-<ng-template class="modal" #saveSuccess let-saveSuccess>
-  <div class="modal-header">
-    <h4 class="modal-title text-center">Sikeres értékelés</h4>
-    <button type="button" class="btn-close" aria-label="Close" (click)="saveSuccess.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <p *ngIf="!wantsToChange">Szerintünk az értékelése ennyi csillagnak felel meg, Egyetért?</p>
-    <p *ngIf="wantsToChange">Válasszd ki az általad gondoltad</p>
-    <ngb-rating [(rate)]="creationResult.stars" [starTemplate]="t" [max]="5" [readonly]="!wantsToChange"></ngb-rating>
-  </div>
-  <div class="modal-footer">
-    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="saveSuccess.close(false)">Igen</button>
-    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="changeStars()">Nem</button>
-    <button *ngIf="wantsToChange" type="button" class="btn btn-light align-middle" (click)="saveSuccess.close(true)">Mentés</button>
-  </div>
-</ng-template>
-
 <ngx-spinner
   bdColor="rgba(51,51,51,0.8)"
   size="medium"
@@ -163,7 +120,6 @@
 >
   <p style="font-size: 20px; color: white">Loading...</p>
 </ngx-spinner>
-<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
 
 
 

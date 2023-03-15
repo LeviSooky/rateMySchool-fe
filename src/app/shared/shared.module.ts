@@ -1,5 +1,5 @@
 import {NgModule} from "@angular/core";
-import {NgbModalModule, NgbModule, NgbRatingModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
+import {NgbActiveModal, NgbModalModule, NgbModule, NgbRatingModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
 import {PagerComponent} from './component/pager/pager.component';
@@ -11,14 +11,17 @@ import {NgxSpinnerModule} from "ngx-spinner";
 import {
   ReviewNotAcceptableModalComponent
 } from "./modal/review-not-acceptable-modal/review-not-acceptable-modal.component";
+import { ReviewSuccessComponent } from './modal/review-success/review-success.component';
+import { ResourceFailedComponent } from './modal/resource-failed/resource-failed.component';
 
 @NgModule( {
-  declarations: [
-
-
-    PagerComponent,
+    declarations: [
+        PagerComponent,
         DomainPipe,
-  ],
+        ReviewNotAcceptableModalComponent,
+        ReviewSuccessComponent,
+        ResourceFailedComponent,
+    ],
   imports: [
     NgbToastModule,
     NgbModalModule,
@@ -39,6 +42,8 @@ import {
     FormsModule,
     DomainPipe,
     NgxSpinnerModule,
+    ReviewNotAcceptableModalComponent,
+    ReviewSuccessComponent,
   ],
   providers: [
     {
@@ -51,8 +56,8 @@ import {
       useClass: TokenInterceptor,
       multi: true
     },
+    NgbActiveModal,
   ],
-  entryComponents: [ReviewNotAcceptableModalComponent]
   })
 export class SharedModule {
 

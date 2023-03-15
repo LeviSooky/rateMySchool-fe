@@ -7,7 +7,7 @@ export class User {
   exp: Moment;
   token;
   constructor(decodedjwt, jwt) {
-    this.exp = moment(decodedjwt.exp);
+    this.exp = moment(decodedjwt.exp * 1000);
     this.roles = decodedjwt.role.map(x => x.authority);
     this.token = jwt;
   }

@@ -1,0 +1,14 @@
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Sikeres értékelés</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <p *ngIf="!wantsToChange">Szerintünk az értékelése ennyi csillagnak felel meg, Egyetért?</p>
+    <p *ngIf="wantsToChange">Válasszd ki az általad gondoltad</p>
+    <ngb-rating [(rate)]="reviewResponse.stars" [starTemplate]="startTemplate" [max]="5" [readonly]="!wantsToChange"></ngb-rating>
+  </div>
+  <div class="modal-footer">
+    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="activeModal.dismiss()">Igen</button>
+    <button *ngIf="!wantsToChange" type="button" class="btn btn-light align-middle" (click)="wantsToChange = true">Nem</button>
+    <button *ngIf="wantsToChange" type="button" class="btn btn-light align-middle" (click)="activeModal.close(true)">Mentés</button>
+  </div>

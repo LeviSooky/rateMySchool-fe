@@ -25,8 +25,21 @@
              class="bi bi-arrow-down"></i>
 
         </th>
-        <th class="text-center">Weboldal</th>
-        <th class="text-center">Cím</th>
+        <th class="text-center" (click)="sort('avgRating')">
+          Átlag Értékelés
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'avgRating'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'avgRating'"
+             class="bi bi-arrow-down"></i>
+
+        </th>
+        <th class="text-center" (click)="sort('school.name')">
+          Iskola
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'school.name'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'school.name'"
+             class="bi bi-arrow-down"></i>
+        </th>
       </tr>
       </thead>
       <tbody>
@@ -37,7 +50,10 @@
                  class="img-thumbnail" alt="tanár icon">
           </td>
           <td class="text-center align-middle">{{teacher.name}}</td>
-          <td class="text-center">{{teacher.school.name}}</td>
+          <td class="text-center align-middle">{{teacher.avgRating | number: '1.0-2'}}</td>
+          <td class="text-center align-middle">
+            <a class="link-success" (click)="toSchool(teacher.school.id)">{{teacher.school.name}}</a>
+          </td>
         </tr>
       </ng-container>
       <ng-container *ngIf="teachers.length === 0">
@@ -50,3 +66,56 @@
     <app-pager [(pageReq)]="pageReq" (pageChange)="search()"></app-pager>
   </div>
 </div>
+
+<ng-template class="modal" #creationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Tanár Létrehozása</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="needs-validation" [formGroup]="formGroup">
+      <div class="row mb-3">
+        <label for="inputEmail3" class="col-sm-2 col-form-label">Név</label>
+        <div class="col-sm-10">
+          <input
+            type="text" class="form-control" id="inputEmail3" formControlName="name"
+            [class.is-invalid]="name.invalid && name.touched" required>
+        </div>
+        <div class="invalid-feedback">
+          Az tanár nevének legalább 10 karakternek kell lennie!
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="school" class="col-sm-2 col-form-label">iskola</label>
+        <div class="col-sm-10">
+          <input
+            id="school"
+            (selectItem)="setSchoolId($event)"
+            [showHint]="true"
+            type="text"
+            class="form-control"
+            [ngbTypeahead]="searchInline"
+            placeholder="Iskola keresés"
+            [resultFormatter]="schoolFormatter"
+            [inputFormatter]="schoolFormatter"
+          />
+          <small *ngIf="searchingInline" class="form-text text-muted">searching...</small>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-sm-10 offset-sm-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck1" formControlName="isMale">
+            <label class="form-check-label" for="gridCheck1">
+              Férfi
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" [disabled]="formGroup.invalid" (click)="save(modal)">Mentés</button>
+  </div>
+</ng-template>

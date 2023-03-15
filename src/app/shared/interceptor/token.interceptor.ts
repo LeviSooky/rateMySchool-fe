@@ -15,7 +15,7 @@ export class TokenInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (!request.url.includes('moderator') || !request.url.includes('admin')) {
+    if (!request.url.includes('moderator') && !request.url.includes('admin')) {
      return next.handle(request);
     }
     return this.authService.authUser.pipe(
@@ -25,9 +25,11 @@ export class TokenInterceptor implements HttpInterceptor {
           return next.handle(request);
         }
         if (moment().isAfter(user.exp)) {
+          console.log(moment().toDate(), user.exp.toDate())
           this.authService.logout();
           return next.handle(request);
         }
+        console.log('mizu', user)
         const modifiedReq = request.clone({
           headers: request.headers.set('Authorization', `Bearer ${user.token}`)
         });

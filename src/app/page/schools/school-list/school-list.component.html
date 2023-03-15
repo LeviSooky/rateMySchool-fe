@@ -30,7 +30,13 @@
           <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'avgRating'"
              class="bi bi-arrow-down"></i>
         </th>
-        <th class="text-center">Weboldal</th>
+        <th class="text-center" (click)="sort('websiteUrl')">
+          Weboldal
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'websiteUrl'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'websiteUrl'"
+             class="bi bi-arrow-down"></i>
+        </th>
         <th class="text-center">Cím</th>
       </tr>
       </thead>
@@ -38,7 +44,7 @@
       <ng-container *ngIf="schools.length > 0">
         <tr *ngFor="let school of schools; let i = index" (dblclick)="openSchool(i)">
           <td class="text-center">{{school.name}}</td>
-          <td class="text-center">{{school.avgRating}}</td>
+          <td class="text-center">{{school.avgRating | number: '1.0-2'}}</td>
           <td class="text-center">
             <a class="link-primary" (click)="goToLink(school.websiteUrl)">{{school.websiteUrl | domain}}</a>
           </td>
@@ -81,7 +87,7 @@
       </div>
       <div class="input-group mb-3">
         <input type="file" accept="image/png" class="form-control" id="inputGroupFile02" formControlName="image" (change)="setImage($event)">
-        <label class="input-group-text" for="inputGroupFile02">Upload</label>
+        <label class="input-group-text" for="inputGroupFile02">Kép feltöltés</label>
       </div>
 <!--      <div class="col-md-4">-->
 <!--        <label for="validationCustomUsername" class="form-label">Username</label>-->

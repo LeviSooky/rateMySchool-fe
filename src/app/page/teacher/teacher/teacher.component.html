@@ -11,11 +11,13 @@
         </div>
         <div class="d-flex mt-2">
           <h5 class="title">Iskola:</h5>
-          <h5 class="px-2">{{teacher.school.name}}</h5>
+          <h5 class="px-2">
+            <a class="link-success" (click)="toSchool(teacher.school.id)">{{teacher.school.name}}</a>
+          </h5>
         </div>
         <div class="d-flex mt-2">
-          <h5 class="title">Kitalálni az egyebet:</h5>
-          <h5 class="px-2">{{teacher.name}}</h5>
+          <h5 class="title">Átlag Értékelés:</h5>
+          <h5 class="px-2">{{teacher.avgRating | number: '1.2-2'}}</h5>
         </div>
       </div>
     </div>
@@ -31,7 +33,7 @@
             </div>
           </th>
           <th>
-            <select *ngIf="reviews && reviews.length > 0 " class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortA($event)">
+            <select *ngIf="reviews && reviews.length > 0 " class="form-select form-select-sm" aria-label=".form-select-sm example" (change)="sortReview($event)">
               <option [attr.selected]="!selectedSort" value="0">Rendezés</option>
               <option
                 [attr.selected]=" selectedSort && selectedSort?.field === 'stars' && selectedSort?.direction === SortDirection.ASC"
@@ -76,8 +78,29 @@
   </div>
 </div>
 
+<ng-template class="modal" #creationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Értékelés hozzáadása</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <form class="row g-3">
+      <div class="form">
+        <label for="floatingTextarea2">Értékelés</label>
+        <textarea [formControl]="newReview" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" rows="12"></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="saveReview(modal)">Küldés</button>
+  </div>
+</ng-template>
+
 <ng-template #t let-fill="fill">
   <i class="bi-star-fill">
     <i *ngIf="fill > 0" class="bi-star-fill filled" [style.width.%]="fill"></i>
   </i>
 </ng-template>
+
+<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
+

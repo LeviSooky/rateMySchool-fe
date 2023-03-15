@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
+import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-review-not-acceptable-modal',
@@ -6,5 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./review-not-acceptable-modal.component.scss']
 })
 export class ReviewNotAcceptableModalComponent {
+
+  constructor(protected activateModal: NgbActiveModal) {
+  }
 
 }

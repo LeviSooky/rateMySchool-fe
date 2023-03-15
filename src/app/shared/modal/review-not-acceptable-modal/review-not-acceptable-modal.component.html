@@ -1,11 +1,10 @@
-<div class="modal-header">
-  <h4 class="modal-title text-center">Sikertelen értékelés</h4>
-  <button type="button" class="btn-close" aria-label="Close"></button>
-</div>
-<div class="modal-body">
-  A kiértékelés során hiba történt, így a moderátorainknak kézzel szükséges jóváhagyni az értékelést, a jóváhagyást
-  követően meg fog jelenni az értékelése!
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-light align-middle">Rendben</button>
-</div>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Sikertelen értékelés</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="activateModal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    Sajnos az értékelésben olyan dolgokat észleltünk amelyek nem felelnek meg, kérjük gondolja át és próbálja meg újra!
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light align-middle" (click)="activateModal.close()">Rendben</button>
+  </div>

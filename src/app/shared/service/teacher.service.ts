@@ -41,10 +41,16 @@ export class TeacherService {
       .get(`${this.resourceUrl}/${id}`, { observe: 'body'})
       .pipe(map((res: any) => convert(res)));
   }
+
+  create(teacher: Teacher, schoolId: string): Observable<Teacher> {
+    return this.http
+      .post(`${this.resourceUrl}/add/${schoolId}`, teacher, { observe:"response" })
+      .pipe(map((res: HttpResponse<any>) => convert(res.body)));
+  }
 }
 
 export function convert(data: any): Teacher {
-  return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school));
+  return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school), data.avgRating);
 }
 
 export function convertArray(data: any[]): Teacher[] {

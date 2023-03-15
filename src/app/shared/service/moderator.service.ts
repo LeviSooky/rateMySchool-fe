@@ -3,15 +3,20 @@ import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {map, Observable} from "rxjs";
 import {PageRequest} from "../model/page-request";
 import {convertArray, getPaginationParams} from "./school.service";
+import {convertTeacherReviewArray} from "./teacher-review.service";
 import {School} from "../model/school.model";
 import {Teacher} from "../model/teacher.model";
+import {TeacherReview} from "../model/teacher-review";
+import {convert} from "./teacher.service";
+import {convertSchoolReviewArray} from "./school-review.service";
+import {SchoolReview} from "../model/school-review.model";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ModeratorService {
 
-  private baseUrl = '/moderator'
+  private baseUrl = 'moderator'
   constructor(private http: HttpClient) {}
 
   getPendingReviews() {
@@ -83,6 +88,28 @@ export class ModeratorService {
         pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
         return convertArray(response.body);
+      }))
+  }
+
+  findTeacherReviewsBy(teacherId: string, pageReq: PageRequest): Observable<TeacherReview[]> {
+    let params = getPaginationParams(pageReq);
+    return this.http
+      .get(`${this.baseUrl}/teachers/reviews/${teacherId}`, { observe: 'response', params: params})
+      .pipe(map((response: HttpResponse<any[]>) => {
+        pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
+        pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
+        return convertTeacherReviewArray(response.body);
+      }))
+  }
+
+  findSchoolReviewsBy(schoolId: string, pageReq: PageRequest): Observable<SchoolReview[]> {
+    let params = getPaginationParams(pageReq);
+    return this.http
+      .get(`${this.baseUrl}/schools/reviews/${schoolId}`, { observe: 'response', params: params})
+      .pipe(map((response: HttpResponse<any[]>) => {
+        pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
+        pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
+        return convertSchoolReviewArray(response.body);
       }))
   }
 }

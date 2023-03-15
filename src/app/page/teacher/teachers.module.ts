@@ -5,6 +5,7 @@ import { TeacherComponent } from './teacher/teacher.component';
 import {SharedModule} from "../../shared/shared.module";
 import {RouterModule} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
+import {NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 
 
 
@@ -13,18 +14,19 @@ import {HttpClient} from "@angular/common/http";
     TeacherListComponent,
     TeacherComponent
   ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    RouterModule.forChild([
-      {
-        path: '', pathMatch: 'full', component: TeacherListComponent
-      },
-      {
-        path: ':id', component: TeacherComponent,
-      }
-    ])
-  ],
+    imports: [
+        CommonModule,
+        SharedModule,
+        RouterModule.forChild([
+            {
+                path: '', pathMatch: 'full', component: TeacherListComponent
+            },
+            {
+                path: ':id', component: TeacherComponent,
+            }
+        ]),
+        NgbTypeahead
+    ],
   providers: [HttpClient]
 })
 export class TeachersModule { }
