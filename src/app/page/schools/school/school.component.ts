@@ -21,7 +21,7 @@ import {
 import {ReviewSuccessComponent} from "../../../shared/modal/review-success/review-success.component";
 import {ResourceFailedComponent} from "../../../shared/modal/resource-failed/resource-failed.component";
 import {AuthService} from "../../../shared/service/auth.service";
-import {User} from "../../../shared/model/user.model";
+import {AuthUser} from "../../../shared/model/auth-user.model";
 import {ModeratorService} from "../../../shared/service/moderator.service";
 
 @Component({
@@ -55,7 +55,7 @@ export class SchoolComponent implements OnInit {
   creationResult: AddReviewResponse;
   wantsToChange: boolean;
   authSub: Subscription;
-  user: User;
+  user: AuthUser;
   constructor(
     private route: ActivatedRoute,
     private schoolService: SchoolService,
@@ -107,6 +107,13 @@ export class SchoolComponent implements OnInit {
     return this.pageReq;
   }
 
+  loadData() {
+    this.schoolService.findBy(this.school.id)
+      .pipe(take(1))
+      .subscribe(res => this.school = res);
+    this.searchReviews();
+  }
+
   searchReviews() {
     this.getReviewSearch()
       .pipe(take(1))
@@ -149,7 +156,7 @@ export class SchoolComponent implements OnInit {
   openCreationModal() {
     this.newReview.reset();
     this.modalService.open(this.creationModal,
-      {backdrop: "static", keyboard: false, size: 'xl', animation: true})
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true})
   }
 
   toDefaultImage(schoolImg: HTMLImageElement) {
@@ -161,7 +168,10 @@ export class SchoolComponent implements OnInit {
       .pipe(take(1))
       .subscribe({
         error: () => this.toastService.showError("Valami hiba történt!"),
-        complete: () => this.toastService.showSuccessToast(`Sikeres ${ shouldActivate ? 'aktíválás' : 'törlés'} !`)
+        complete: () => {
+          this.toastService.showSuccessToast(`Sikeres ${ shouldActivate ? 'aktíválás' : 'törlés'} !`);
+          this.searchReviews();
+        }
       })
   }
 
@@ -172,6 +182,7 @@ export class SchoolComponent implements OnInit {
       this.reviewService.save(this.school.id, this.newReview.getRawValue())
         .pipe(take(1))
         .subscribe(result => {
+          this.searchReviews();
           this.spinnerService.hide('spinner');
           this.creationResult = result;
           switch (result.status) {
@@ -191,8 +202,11 @@ export class SchoolComponent implements OnInit {
               ngbModalRef.result.then(() => {
                 this.reviewService.modifyStars(result.id, result.stars)
                   .pipe(take(1))
-                  .subscribe(() => this.toastService.showSuccessToast("Sikeres módosítás!"));
-              }, () => {})
+                  .subscribe(() => {
+                    this.toastService.showSuccessToast("Sikeres módosítás!");
+                    this.loadData();
+                  });
+              }, () => this.loadData())
               break;
           }
         }, () => this.spinnerService.hide('spinner')); //TODO

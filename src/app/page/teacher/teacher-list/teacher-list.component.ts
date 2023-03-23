@@ -1,14 +1,14 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Teacher} from "../../../shared/model/teacher.model";
 import {TeacherService} from "../../../shared/service/teacher.service";
 import {PageRequest} from "../../../shared/model/page-request";
 import {
   catchError,
   debounceTime,
-  distinctUntilChanged, map,
+  distinctUntilChanged,
   Observable,
   of,
-  OperatorFunction,
+  OperatorFunction, Subscription,
   switchMap,
   take,
   tap
@@ -20,24 +20,34 @@ import {SchoolService} from "../../../shared/service/school.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {School} from "../../../shared/model/school.model";
 import {ToastService} from "../../../shared/service/toast.service";
+import {AuthUser} from "../../../shared/model/auth-user.model";
+import {AuthService} from "../../../shared/service/auth.service";
+import {EntityStatus} from "../../../shared/enums/entity.status";
+import {ModeratorService} from "../../../shared/service/moderator.service";
 
 @Component({
   selector: 'app-teacher-list',
   templateUrl: './teacher-list.component.html',
   styleUrls: ['./teacher-list.component.scss']
 })
-export class TeacherListComponent implements OnInit {
+export class TeacherListComponent implements OnInit, OnDestroy {
 
   @ViewChild('creationModal') private creationModal;
+  @ViewChild('typeahead', {read: ElementRef}) private typeahead: HTMLInputElement;
   teachers: Teacher[] = [];
   pageReq: PageRequest = new PageRequest();
   formGroup: FormGroup;
   keyword: string = '';
   currentSort?: Sort;
+  user: AuthUser;
   SortDirection = SortDirection;
+  isEdit: boolean = false;
+  editedTeacherId: string;
   private lastSearch: string;
   protected searchingInline: boolean = false;
   model: any;
+  authSub: Subscription;
+  EntityStatus = EntityStatus;
   private schoolPageReq: PageRequest;
 
 
@@ -47,9 +57,12 @@ export class TeacherListComponent implements OnInit {
     private schoolService: SchoolService,
     private modalService: NgbModal,
     private toastService: ToastService,
+    private authService: AuthService,
+    private moderatorService: ModeratorService,
   ) {}
 
   ngOnInit(): void {
+    this.authSub = this.authService.authUser.subscribe(user => this.user = user);
     this.schoolPageReq = new PageRequest();
     this.schoolPageReq.size = 15;
     this.schoolPageReq.setSort(new Sort('name', SortDirection.ASC));
@@ -57,23 +70,23 @@ export class TeacherListComponent implements OnInit {
 
       name: new FormControl('', [Validators.required, Validators.minLength(10)]),
       isMale: new FormControl(false, [Validators.required]),
-      schoolId: new FormControl('', [Validators.required]),
+      school: new FormControl<School>(null, [Validators.required, Validators.nullValidator]),
     })
     this.teacherService.findAll(this.pageReq)
       .pipe(take(1))
       .subscribe(result => this.teachers = result);
   }
 
-  get name(): AbstractControl {
-    return this.formGroup.get('name') as AbstractControl;
+  get name(): FormControl {
+    return this.formGroup.get('name') as FormControl;
   }
 
-  get isMale(): AbstractControl {
-    return this.formGroup.get('isMale') as AbstractControl;
+  get isMale(): FormControl {
+    return this.formGroup.get('isMale') as FormControl;
   }
 
-  get schoolId(): AbstractControl {
-    return this.formGroup.get('schoolId') as AbstractControl;
+  get school(): FormControl {
+    return this.formGroup.get('school') as FormControl;
   }
 
   search() {
@@ -83,23 +96,42 @@ export class TeacherListComponent implements OnInit {
         this.clearCurrentSort();
       }
       this.lastSearch = this.keyword;
-      this.teacherService.findAllBy(this.keyword, this.pageReq)
-        .pipe(take(1))
-        .subscribe(result => {
-          this.teachers = result;
-          this.pageReq = Object.assign(new PageRequest(), this.pageReq);
-        })
+      if (this.user) {
+        this.moderatorService.findTeachersBy(this.keyword, this.pageReq)
+          .pipe(take(1))
+          .pipe(take(1))
+          .subscribe(result => {
+            this.teachers = result;
+            this.pageReq = Object.assign(new PageRequest(), this.pageReq);
+          })
+      } else {
+        this.teacherService.findAllBy(this.keyword, this.pageReq)
+          .pipe(take(1))
+          .subscribe(result => {
+            this.teachers = result;
+            this.pageReq = Object.assign(new PageRequest(), this.pageReq);
+          })
+      }
     } else {
       if (this.lastSearch !== '') {
         this.lastSearch = '';
         this.clearCurrentSort()
       }
-      this.teacherService.findAll(this.pageReq)
-        .pipe(take(1))
-        .subscribe(result => {
-          this.teachers = result;
-          this.pageReq = Object.assign(new PageRequest(), this.pageReq);
-        })
+      if (this.user) {
+        this.moderatorService.findTeachers(this.pageReq)
+          .pipe(take(1))
+          .subscribe(result => {
+            this.teachers = result;
+            this.pageReq = Object.assign(new PageRequest(), this.pageReq);
+          })
+      } else {
+        this.teacherService.findAll(this.pageReq)
+          .pipe(take(1))
+          .subscribe(result => {
+            this.teachers = result;
+            this.pageReq = Object.assign(new PageRequest(), this.pageReq);
+          })
+      }
     }
     window.scrollTo(0, 0);
   }
@@ -121,8 +153,23 @@ export class TeacherListComponent implements OnInit {
   schoolFormatter = (school: School) => school.name;
 
   openCreationModal() {
+    this.formGroup.reset();
+    this.isEdit = false;
     this.modalService.open(this.creationModal,
-      {backdrop: "static", keyboard: false, size: 'xl', animation: true});
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true});
+  }
+
+  openEditModal(index: number) {
+    this.formGroup.reset();
+    let teacher = this.teachers[index];
+    this.isEdit = true;
+    this.editedTeacherId = teacher.id;
+    this.isMale.setValue(teacher.isMale);
+    this.name.setValue(teacher.name);
+    this.school.setValue(teacher.school);
+    console.log(this.school)
+    this.modalService.open(this.creationModal,
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true});
   }
 
   private clearCurrentSort() {
@@ -156,19 +203,59 @@ export class TeacherListComponent implements OnInit {
     if (this.formGroup.valid) {
       let teacher = new Teacher();
       teacher.name = this.name.getRawValue();
+      teacher.id = this.editedTeacherId;
       teacher.isMale = this.isMale.getRawValue();
-      this.teacherService.create(teacher, this.schoolId.getRawValue())
+
+      this.teacherService.create(teacher, this.school.value.id)
         .pipe(take(1))
         .subscribe(() => {
           this.toastService.showSuccessToast('Sikeres létrehozás, moderátoraink jóváhagyása után láthatóvá válik az általad hozzáadott tanár!');
-          modal.close
+          modal.close();
           this.formGroup.reset();
         }, () => this.toastService.showError("Valami hiba történt, kérlek próbálkozz később!"))
     }
   }
 
-  setSchoolId(selected) {
-    this.schoolId.setValue(selected.item.id);
-    console.log(this.formGroup)
+  moderate(teacherId: string, shouldActivate: boolean) {
+    this.moderatorService.moderateTeacher(teacherId, shouldActivate)
+      .pipe(take(1))
+      .subscribe({
+        error: () => this.toastService.showError("Valami hiba történt!"),
+        complete: () => {
+          this.toastService.showSuccessToast(`Sikeres ${ shouldActivate ? 'aktíválás' : 'törlés'} !`);
+          this.search();
+        }
+      })
+  }
+
+  validate(typeahead: HTMLInputElement) {
+    if (this.school.invalid) {
+      typeahead.value = '';
+      typeahead.classList.add('is-invalid');
+    }
+  }
+
+  update(modal: any) {
+    if (!this.formGroup.valid) {
+      return;
+    }
+    let teacherToUpdate = new Teacher();
+    teacherToUpdate.id = this.editedTeacherId;
+    teacherToUpdate.name = this.name.value;
+    teacherToUpdate.isMale = this.isMale.value;
+    this.moderatorService.editTeacher(teacherToUpdate, this.school.value.id)
+      .pipe(take(1))
+      .subscribe({
+        complete: () => {
+          this.toastService.showSuccessToast("Sikeres módosítás!");
+          this.search();
+          modal.close();
+        },
+        error: () => this.toastService.showError("Valami hiba történt")
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.authSub?.unsubscribe();
   }
 }

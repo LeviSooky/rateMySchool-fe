@@ -1,8 +1,8 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Router, RouterOutlet} from "@angular/router";
+import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AuthService} from "../../service/auth.service";
-import {Role, User} from "../../model/user.model";
+import {Role, AuthUser} from "../../model/auth-user.model";
 
 @Component({
   selector: 'app-nav-bar',
@@ -12,7 +12,7 @@ import {Role, User} from "../../model/user.model";
 export class NavBarComponent implements OnInit, OnDestroy {
 
   private authSub: Subscription;
-  private user: User;
+  private user: AuthUser;
 
   constructor(private router: Router, private authService: AuthService) {
   }
@@ -32,7 +32,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   }
 
   isAdmin(): boolean {
-    return this.user && this.user.roles.findIndex(role => role === Role.ADMIN) > -1;
+    return this.user && this.user.roles.findIndex(role => role == Role.ADMIN) > -1;
   }
 
   isModerator(): boolean {
@@ -41,5 +41,9 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
   isLoggedIn(): boolean {
     return !!this.user;
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

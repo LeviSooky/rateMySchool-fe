@@ -1,5 +1,12 @@
 import {NgModule} from "@angular/core";
-import {NgbActiveModal, NgbModalModule, NgbModule, NgbRatingModule, NgbToastModule} from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgbActiveModal,
+  NgbModalModule,
+  NgbModule,
+  NgbRatingModule,
+  NgbToastModule,
+  NgbTooltip
+} from "@ng-bootstrap/ng-bootstrap";
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {BaseUrlInterceptor} from "./interceptor/base-url.interceptor";
 import {PagerComponent} from './component/pager/pager.component';
@@ -23,20 +30,23 @@ import { ResourceFailedComponent } from './modal/resource-failed/resource-failed
         ResourceFailedComponent,
     ],
   imports: [
+    CommonModule,
     NgbToastModule,
     NgbModalModule,
     NgbModule,
-    CommonModule,
     NgbRatingModule,
     ReactiveFormsModule,
     FormsModule,
     NgxSpinnerModule,
+    NgbTooltip,
   ],
   exports: [
+    CommonModule,
     NgbToastModule,
     NgbModalModule,
     NgbRatingModule,
     NgbModalModule,
+    NgbTooltip,
     PagerComponent,
     ReactiveFormsModule,
     FormsModule,

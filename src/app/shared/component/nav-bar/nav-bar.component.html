@@ -17,13 +17,15 @@
           <a class="nav-link" routerLink="/schools" [class.active]="isActive('schools')">Iskolák</a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Egyéb
+          <a class="nav-link dropdown-toggle" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false"
+             [class.active]="isActive('admin') || isActive('login')">
+            {{isAdmin() ? 'Admin' : 'Egyéb'}}
           </a>
           <ul class="dropdown-menu">
             <li *ngIf="!isLoggedIn()"><a class="dropdown-item" routerLink="/login">Bejelentkezés</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li *ngIf="isAdmin()"><a class="dropdown-item" routerLink="/admin/users">Felhasználók kezelése</a></li>
+            <li *ngIf="isLoggedIn()"><a class="dropdown-item" (click)="logout()">Kijelentkezés</a></li>
           </ul>
         </li>
       </ul>

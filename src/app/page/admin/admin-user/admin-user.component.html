@@ -1,0 +1,122 @@
+<div class="container table-box">
+  <div class="mt-3">
+    <div class="input-group mb-3 pt-3">
+      <input type="text" class="search form-control input-search" placeholder="keresés"
+             [(ngModel)]="keyword" aria-describedby="button-addon2" (keyup.enter)="search()" >
+      <div class="row">
+        <button class="btn search-btn btn-outline-secondary col" type="button"
+                id="search-button" (click)="search()">Keresés</button>
+        <button class="btn search-btn btn-outline-secondary col" type="button"
+                id="create-button" (click)="openCreationModal()">Létrehozás</button>
+      </div>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+      <tr>
+        <th >Funkciók</th>
+        <th class="text-center">
+          ID
+        </th>
+        <th class="text-center">
+          Email
+        </th>
+        <th class="text-center">
+          Vezetéknév
+        </th>
+        <th class="text-center">
+          Keresztnév
+        </th>
+        <th class="text-center">
+          Admin
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <ng-container *ngIf="users.length > 0">
+        <tr *ngFor="let user of users; let i = index">
+          <td *ngIf="user">
+            <button ngbTooltip="törlés" placement="start" class="bg-danger" (click)="delete(user.id)">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <button ngbTooltip="módosítás" placement="start" class="bg-warning" (click)="openEditModal(i)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </td>
+          <td class="text-center">{{user.id}}</td>
+          <td class="text-center">{{user.email}}</td>
+          <td class="text-center">{{user.lastName}}</td>
+          <td class="text-center">{{user.firstName}}</td>
+          <td class="text-center">{{user.isAdmin ? 'Igen' : 'Nem'}}</td>
+        </tr>
+      </ng-container>
+      <ng-container *ngIf="users.length === 0">
+        <td colspan="6" class="text-center no-result">
+          Az adott keresés alapján nem található felhasználó!
+        </td>
+      </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<ng-template class="modal" #creationModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title text-center">Felhasználó {{isEdit ? 'Szerkesztése' : 'Létrehozása'}}</h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click'); this.formGroup.reset()"></button>
+  </div>
+  <div class="modal-body">
+    <form class="row g-3 needs-validation" novalidate [formGroup]="formGroup">
+      <div class="col-md-4">
+        <label for="validationCustom01" class="form-label">Email</label>
+        <input type="text" class="form-control" [class.is-invalid]="email.invalid && email.touched"
+               formControlName="email" id="validationCustom01" value="Mark" required>
+        <div class="invalid-feedback" >
+          Valid email címnek kell lennie!
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="validationCustom02" class="form-label">Vezetéknév</label>
+        <input type="text" formControlName="lastName" class="form-control" [class.is-invalid]="lastName.invalid && lastName.touched"
+               id="validationCustom02" required>
+        <div class="invalid-feedback" *ngIf="lastName.invalid && lastName.touched">
+          Legalább 5 karakternek kell lennie!
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="validationCustom03" class="form-label">Keresztnév</label>
+        <input type="text" formControlName="firstName" class="form-control" [class.is-invalid]="firstName.invalid && firstName.touched"
+               required>
+        <div class="invalid-feedback" id="validationCustom03" *ngIf="firstName.invalid && firstName.touched">
+          Legalább 5 karakternek kell lennie!
+        </div>
+      </div>
+      <h5 *ngIf="isEdit" class="mt-5">A jelszót csak változtatás esetén kell kitölteni.</h5>
+      <div class="col-md-4">
+        <label for="validationCustom02" class="form-label">Jelszó</label>
+        <input type="password" class="form-control" formControlName="password" [class.is-invalid]="password.invalid && password.touched">
+        <div class="invalid-feedback" *ngIf="password.invalid && password.touched">
+          A jelszónak legalább 8 karakternek kell lennie, legalább egy kisbetű, nagybetű és szám kötelező!
+        </div>
+      </div>
+      <div class="col-md-4">
+        <label for="validationCustom02" class="form-label">Jelszó Újra</label>
+        <input type="password" class="form-control" formControlName="rePassword" [class.is-invalid]="rePassword.invalid && rePassword.touched">
+        <div class="invalid-feedback" *ngIf="rePassword.invalid && rePassword.touched">
+          A két jelszó nem egyezik!
+        </div>
+      </div>
+      <div class="form-check ml-10">
+        <input class="form-check-input" type="checkbox" formControlName="isAdmin" id="flexCheckDefault">
+        <label class="form-check-label" for="flexCheckDefault">
+          Admin
+        </label>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" [disabled]="formGroup.invalid" (click)="isEdit ? edit(modal) : save(modal)">Mentés</button>
+  </div>
+</ng-template>

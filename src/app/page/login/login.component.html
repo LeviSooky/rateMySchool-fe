@@ -10,14 +10,14 @@
               <h2 class="fw-bold mb-2 text-uppercase">Admin Bejelentkezés</h2>
               <p class="text-white-50 mb-5">Add meg az emailed és a jelszavad!</p>
 
-              <div class="form-outline form-white mb-4">
-                <input type="email" formControlName="email" id="typeEmailX" class="form-control form-control-lg" />
-                <label class="form-floating" for="typeEmailX">Email</label>
+              <div class="form-floating form-white mb-4">
+                <input type="email" formControlName="email" id="typeEmailX" class="form-control form-control-lg" placeholder="name@example.com" />
+                <label for="typeEmailX">Email</label>
               </div>
 
-              <div class="form-outline form-white mb-4">
-                <input type="password" formControlName="password" id="typePasswordX" class="form-control form-control-lg" />
-                <label class="form-label" for="typePasswordX">Jelszó</label>
+              <div class="form-floating form-white mb-4">
+                <input type="password" formControlName="password" id="typePasswordX" class="form-control form-control-lg" placeholder="Password" />
+                <label for="typePasswordX">Jelszó</label>
               </div>
               <button class="btn btn-outline-light btn-lg px-5" (click)="onLogin()" type="submit">Login</button>
             </div>

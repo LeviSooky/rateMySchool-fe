@@ -5,7 +5,7 @@ import { TeacherComponent } from './teacher/teacher.component';
 import {SharedModule} from "../../shared/shared.module";
 import {RouterModule} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
-import {NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
+import {NgbTooltip, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 
 
 
@@ -25,7 +25,8 @@ import {NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
                 path: ':id', component: TeacherComponent,
             }
         ]),
-        NgbTypeahead
+        NgbTypeahead,
+        NgbTooltip
     ],
   providers: [HttpClient]
 })

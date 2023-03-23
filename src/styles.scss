@@ -25,6 +25,11 @@ body {
   color: $white;
 }
 
+.dropdown-menu {
+  max-height: 500px;
+  overflow: auto;
+}
+
 .modal-header button {
   color: $white;
 }

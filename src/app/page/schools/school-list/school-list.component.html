@@ -15,6 +15,7 @@
     <table class="table table-hover">
       <thead>
       <tr>
+        <th *ngIf="user">Funkciók</th>
         <th class="text-center" (click)="sort('name')">
           Név
           <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'name'"
@@ -37,18 +38,35 @@
           <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'websiteUrl'"
              class="bi bi-arrow-down"></i>
         </th>
-        <th class="text-center">Cím</th>
+        <th class="text-center" (click)="sort('city')">
+          Város
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.ASC && currentSort.field === 'city'"
+             class="bi bi-arrow-up"></i>
+          <i *ngIf="currentSort && currentSort.direction === SortDirection.DESC && currentSort.field === 'city'"
+             class="bi bi-arrow-down"></i>
+        </th>
       </tr>
       </thead>
       <tbody>
       <ng-container *ngIf="schools.length > 0">
         <tr *ngFor="let school of schools; let i = index" (dblclick)="openSchool(i)">
+          <td *ngIf="user">
+            <button *ngIf="school.status !== EntityStatus.ACTIVE" ngbTooltip="aktiválás" placement="start" class="btn-sm bg-success" (click)="moderate(school.id, true)">
+              <i class="bi bi-check-square-fill"></i>
+            </button>
+            <button *ngIf="school.status === EntityStatus.ACTIVE" ngbTooltip="törlés" placement="start" class="bg-danger" (click)="moderate(school.id, false)">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+            <button ngbTooltip="módosítás" placement="start" class="bg-warning" (click)="openEditModal(i)">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </td>
           <td class="text-center">{{school.name}}</td>
           <td class="text-center">{{school.avgRating | number: '1.0-2'}}</td>
           <td class="text-center">
             <a class="link-primary" (click)="goToLink(school.websiteUrl)">{{school.websiteUrl | domain}}</a>
           </td>
-          <td class="text-center">{{school?.address}}</td>
+          <td class="text-center">{{school.city?.name}}</td>
         </tr>
       </ng-container>
       <ng-container *ngIf="schools.length === 0">
@@ -64,7 +82,7 @@
 
 <ng-template class="modal" #creationModal let-modal>
   <div class="modal-header">
-    <h4 class="modal-title text-center">Iskola Létrehozása</h4>
+    <h4 class="modal-title text-center">Iskola {{isEdit ? 'Szerkesztése' : 'Létrehozása'}}</h4>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -85,61 +103,32 @@
           A weboldalnak egy URL-nek kell lennie!
         </div>
       </div>
+      <div class="col-md-4">
+        <label for="validationCustom02" class="form-label">Város</label>
+        <input
+               id="school"
+               formControlName="city"
+               (selectItem)="city.setValue($event)"
+               type="text"
+               class="form-control"
+               [ngbTypeahead]="searchInline"
+               placeholder="Város keresés"
+               [class.is-invalid]="city.invalid && city.touched" required
+               [resultFormatter]="cityFormatter"
+               [inputFormatter]="cityFormatter"
+        />
+        <div class="invalid-feedback">
+          Kötelező választani!
+        </div>
+        <small *ngIf="searchingInline" class="form-text text-muted">searching...</small>
+      </div>
       <div class="input-group mb-3">
-        <input type="file" accept="image/png" class="form-control" id="inputGroupFile02" formControlName="image" (change)="setImage($event)">
+        <input type="file"  [attr.required]="!isEdit" accept="image/png" class="form-control" id="inputGroupFile02" formControlName="image" (change)="setImage($event)">
         <label class="input-group-text" for="inputGroupFile02">Kép feltöltés</label>
       </div>
-<!--      <div class="col-md-4">-->
-<!--        <label for="validationCustomUsername" class="form-label">Username</label>-->
-<!--        <div class="input-group has-validation">-->
-<!--          <span class="input-group-text" id="inputGroupPrepend">@</span>-->
-<!--          <input type="text" class="form-control" id="validationCustomUsername" aria-describedby="inputGroupPrepend" required>-->
-<!--          <div class="invalid-feedback">-->
-<!--            Please choose a username.-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-md-6">-->
-<!--        <label for="validationCustom03" class="form-label">City</label>-->
-<!--        <input type="text" class="form-control" id="validationCustom03" required>-->
-<!--        <div class="invalid-feedback">-->
-<!--          Please provide a valid city.-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-md-3">-->
-<!--        <label for="validationCustom04" class="form-label">State</label>-->
-<!--        <select class="form-select" id="validationCustom04" required>-->
-<!--          <option selected disabled value="">Choose...</option>-->
-<!--          <option>...</option>-->
-<!--        </select>-->
-<!--        <div class="invalid-feedback">-->
-<!--          Please select a valid state.-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-md-3">-->
-<!--        <label for="validationCustom05" class="form-label">Zip</label>-->
-<!--        <input type="text" class="form-control" id="validationCustom05" required>-->
-<!--        <div class="invalid-feedback">-->
-<!--          Please provide a valid zip.-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-12">-->
-<!--        <div class="form-check">-->
-<!--          <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>-->
-<!--          <label class="form-check-label" for="invalidCheck">-->
-<!--            Agree to terms and conditions-->
-<!--          </label>-->
-<!--          <div class="invalid-feedback">-->
-<!--            You must agree before submitting.-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--      <div class="col-12">-->
-<!--        <button class="btn btn-primary" type="submit">Submit form</button>-->
-<!--      </div>-->
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-light" [disabled]="formGroup.invalid" (click)="save(modal)">Mentés</button>
+    <button type="button" class="btn btn-light" [disabled]="formGroup.invalid" (click)="isEdit ? edit(modal) : save(modal)">Mentés</button>
   </div>
 </ng-template>

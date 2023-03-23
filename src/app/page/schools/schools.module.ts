@@ -8,7 +8,7 @@ import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
 import {ToastsContainer} from "../../shared/component/toast/toast-container.component";
 import {NgxSpinnerModule} from "ngx-spinner";
-import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
+import {NgbTooltip, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 
 
 @NgModule({
@@ -30,6 +30,7 @@ import {NgbTooltip} from "@ng-bootstrap/ng-bootstrap";
         ToastsContainer,
         NgxSpinnerModule,
         NgbTooltip,
+        NgbTypeahead,
 
     ],
   providers: [HttpClient]

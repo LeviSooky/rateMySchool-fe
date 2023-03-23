@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {map, Observable} from "rxjs";
 import {PageRequest} from "../model/page-request";
 import {School} from "../model/school.model";
+import {City} from "../model/city.model";
 
 
 @Injectable({
@@ -73,6 +74,6 @@ export function getPaginationParams(pageRequest: PageRequest): HttpParams {
 }
 
 export function convertSchool(data: any): School {
-  let school = new School(data.id, data.name, data.websiteUrl, data.avgRating);
-  return school;
+  return new School(data.id, data.name, data.websiteUrl,
+    data.avgRating, data.address, data.status, data.city ? new City(data.city.id, data.city.name) : null);
 }

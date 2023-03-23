@@ -2,7 +2,7 @@
   <div class="mt-3 pt-3">
     <div class="row pt-3">
       <div class="col-sm-4">
-        <img  [src]="teacher.isMale ? 'assets/teacher_male.png' : 'assets/teacher.png'" alt="school image" class="img-thumbnail">
+        <img  [src]="teacher?.isMale ? 'assets/teacher_male.png' : 'assets/teacher.png'" alt="school image" class="img-thumbnail">
       </div>
       <div *ngIf="teacher" class="col-sm-8">
         <div class="d-flex mt-2">
@@ -15,9 +15,13 @@
             <a class="link-success" (click)="toSchool(teacher.school.id)">{{teacher.school.name}}</a>
           </h5>
         </div>
-        <div class="d-flex mt-2">
-          <h5 class="title">Átlag Értékelés:</h5>
-          <h5 class="px-2">{{teacher.avgRating | number: '1.2-2'}}</h5>
+        <div class="d-flex mt-2 align-items-baseline">
+          <h5 class="title mr-2">Átlag Értékelés:</h5>
+          <ngb-rating
+            *ngIf="teacher.avgRating !== 0" [rate]="teacher.avgRating"
+            [max]="5" [starTemplate]="t" [readonly]="true" placement="bottom"
+            [ngbTooltip]="(teacher.avgRating | number: '1.0-2' ).toString()"></ngb-rating>
+          <h5 class="px-2" *ngIf="teacher.avgRating === 0">Még nincs értékelés</h5>
         </div>
       </div>
     </div>
@@ -25,6 +29,7 @@
       <table class="table">
         <thead>
         <tr>
+          <th *ngIf="user"></th>
           <th class="text-start">
             <div class="btn-container">
               <h6 class="mt-auto">Értékelések</h6>
@@ -57,6 +62,14 @@
         </thead>
         <tbody>
         <tr *ngFor="let review of reviews">
+          <td *ngIf="user">
+            <button *ngIf="review.status !== EntityStatus.ACTIVE" ngbTooltip="aktiválás" placement="start" class="btn-sm bg-success" (click)="moderate(review.id, true)">
+              <i class="bi bi-check-square-fill"></i>
+            </button>
+            <button *ngIf="review.status === EntityStatus.ACTIVE" ngbTooltip="törlés" placement="start" class="bg-danger" (click)="moderate(review.id, false)">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </td>
           <td class="review align-items-lg-end">
             {{review.content}}
           </td>
@@ -102,5 +115,5 @@
   </i>
 </ng-template>
 
-<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
+<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" template="<img alt='gif' src='assets/output-onlinegiftools.gif' style='max-height: 300px'>" [fullScreen] = "true"><p style="color: white; margin-top: 160px" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
 

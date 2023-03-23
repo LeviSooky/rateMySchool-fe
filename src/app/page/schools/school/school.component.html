@@ -15,8 +15,16 @@
           <h5 class="px-2">{{school.websiteUrl}}</h5>
         </div>
         <div class="d-flex mt-2">
+          <h5 class="title">Város:</h5>
+          <h5 class="px-2">{{school.city?.name}}</h5>
+        </div>
+        <div class="d-flex mt-2 align-items-baseline">
           <h5 class="title">Átlag Értékelés:</h5>
-          <h5 class="px-2">{{school.avgRating | number: '1.0-2'}}</h5>
+          <ngb-rating
+            *ngIf="school.avgRating !== 0" [rate]="school.avgRating"
+            [max]="5" [starTemplate]="t" [readonly]="true" placement="bottom"
+            [ngbTooltip]="(school.avgRating | number: '1.0-2' )"></ngb-rating>
+          <h5 class="px-2" *ngIf="school.avgRating === 0">Még nincs értékelés</h5>
         </div>
       </div>
     </div>
@@ -64,7 +72,6 @@
             <button *ngIf="review.status === EntityStatus.ACTIVE" ngbTooltip="törlés" placement="start" class="bg-danger" (click)="moderate(review.id, false)">
               <i class="bi bi-trash3-fill"></i>
             </button>
-
           </td>
           <td class="review align-items-lg-end">
             {{review.content}}
@@ -111,15 +118,8 @@
   </div>
 </ng-template>
 
-<ngx-spinner
-  bdColor="rgba(51,51,51,0.8)"
-  size="medium"
-  [fullScreen]="true"
-  name="second"
-  template="<img style='mt-5' src='https://media2.giphy.com/media/MT5UUV1d4CXE2A37Dg/giphy.gif?cid=ecf05e47a1hi88crpyw3z3hmh5yt72utngqvcq2zn8swn730&rid=giphy.gif&ct=g' />"
->
-  <p style="font-size: 20px; color: white">Loading...</p>
-</ngx-spinner>
+<ngx-spinner name="as" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "square-jelly-box" [fullScreen] = "true"><p style="color: white" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
 
 
+<ngx-spinner name="spinner" bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" template="<img alt='gif' src='assets/output-onlinegiftools.gif' style='max-height: 300px'>" [fullScreen] = "true"><p style="color: white; margin-top: 160px" > Kérjük várj, amíg kiértékeljük az értékelésed... </p></ngx-spinner>
 

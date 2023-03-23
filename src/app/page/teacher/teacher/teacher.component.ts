@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PageRequest} from "../../../shared/model/page-request";
 import {TeacherReview} from "../../../shared/model/teacher-review";
 import {Teacher} from "../../../shared/model/teacher.model";
 import {TeacherService} from "../../../shared/service/teacher.service";
 import {TeacherReviewService} from "../../../shared/service/teacher-review.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {forkJoin, take} from "rxjs";
+import {forkJoin, Observable, Subscription, take} from "rxjs";
 import {Sort, SortDirection} from "../../../shared/model/sort.model";
 import {EntityStatus} from "../../../shared/enums/entity.status";
 import {
@@ -18,13 +18,16 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {NgxSpinnerService} from "ngx-spinner";
 import {AddReviewResponse} from "../../../shared/model/add-review-response.model";
 import {ToastService} from "../../../shared/service/toast.service";
+import {AuthUser} from "../../../shared/model/auth-user.model";
+import {AuthService} from "../../../shared/service/auth.service";
+import {ModeratorService} from "../../../shared/service/moderator.service";
 
 @Component({
   selector: 'app-teacher',
   templateUrl: './teacher.component.html',
   styleUrls: ['./teacher.component.scss']
 })
-export class TeacherComponent implements OnInit {
+export class TeacherComponent implements OnInit, OnDestroy {
 
   @ViewChild('creationModal') private creationModal;
   @ViewChild('t') private starTemplate;
@@ -33,6 +36,9 @@ export class TeacherComponent implements OnInit {
   teacher: Teacher;
   reviews: TeacherReview[] = [];
   selectedSort: Sort;
+  protected user: AuthUser;
+  authSub: Subscription;
+  EntityStatus = EntityStatus;
   SortDirection = SortDirection;
   newReview = new FormControl('', [Validators.required, Validators.minLength(10)]);
   private creationResult: AddReviewResponse;
@@ -45,17 +51,20 @@ export class TeacherComponent implements OnInit {
     private modalService: NgbModal,
     private spinnerService: NgxSpinnerService,
     private toastService: ToastService,
+    private authService: AuthService,
+    private moderatorService: ModeratorService,
   ) {
   }
 
   ngOnInit(): void {
+    this.authSub = this.authService.authUser.subscribe(user => this.user = user);
     this.route.params
       .pipe(take(1))
       .subscribe(params => {
         this.id = params['id'];
         forkJoin({
           teacher: this.teacherService.findBy(this.id),
-          reviews: this.reviewService.findAllActiveBy(this.id, this.pageReq)
+          reviews: this.getReviewSearch(this.id)
         }).pipe(take(1))
           .subscribe(({teacher, reviews}) => {
             this.teacher = teacher;
@@ -67,7 +76,7 @@ export class TeacherComponent implements OnInit {
   }
 
   searchReviews() {
-    this.reviewService.findAllActiveBy(this.teacher.id, this.pageReq)
+    this.getReviewSearch(this.id)
       .pipe(take(1))
       .subscribe(result => {
         this.reviews = result;
@@ -75,9 +84,16 @@ export class TeacherComponent implements OnInit {
       });
   }
 
+  private getReviewSearch(teacherId: string): Observable<TeacherReview[]> {
+    return this.user
+      ? this.moderatorService.findTeacherReviewsBy(teacherId, this.pageReq)
+      : this.reviewService.findAllActiveBy(teacherId, this.pageReq);
+  }
+
+
   openCreationModal() {
     this.modalService.open(this.creationModal,
-      {backdrop: "static", keyboard: false, size: 'xl', animation: true})
+      {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true})
   }
 
   sortReview(event: any) {
@@ -105,6 +121,13 @@ export class TeacherComponent implements OnInit {
 
   toSchool(id: string) {
     this.router.navigate(['/schools/', id]);
+  }
+
+  loadData() {
+    this.teacherService.findBy(this.teacher.id)
+      .pipe(take(1))
+      .subscribe(res => this.teacher = res);
+    this.searchReviews();
   }
 
   saveReview(modal: any) {
@@ -135,9 +158,9 @@ export class TeacherComponent implements OnInit {
                   .pipe(take(1))
                   .subscribe(() => {
                     this.toastService.showSuccessToast("Sikeres módosítás!");
-                    this.refreshReviews();
+                    this.loadData();
                   });
-              }, () => this.refreshReviews())
+              }, () => this.loadData()) //TODO check consistency
               break;
           }
         }, () => this.spinnerService.hide('spinner')); //TODO
@@ -145,9 +168,19 @@ export class TeacherComponent implements OnInit {
     }
   }
 
-  private refreshReviews() {
-    this.reviewService.findAllActiveBy(this.teacher.id, this.pageReq)
+  moderate(reviewId: string, shouldActivate: boolean) {
+    this.moderatorService.moderateTeacherReview(reviewId, shouldActivate)
       .pipe(take(1))
-      .subscribe(result => this.reviews = result);
+      .subscribe({
+        error: () => this.toastService.showError("Valami hiba történt!"),
+        complete: () => {
+          this.toastService.showSuccessToast(`Sikeres ${ shouldActivate ? 'aktíválás' : 'törlés'} !`);
+          this.searchReviews();
+        }
+      })
+  }
+
+  ngOnDestroy(): void {
+    this.authSub?.unsubscribe();
   }
 }

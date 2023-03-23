@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpResponse} from "@angular/common/http";
+import {HttpClient, HttpParams, HttpResponse} from "@angular/common/http";
 import {PageRequest} from "../model/page-request";
 import {convertSchool, getPaginationParams} from "./school.service";
 import {map, Observable} from "rxjs";
@@ -21,7 +21,7 @@ export class TeacherService {
       .pipe(map((response: HttpResponse<any[]>) => {
         pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return convertArray(response.body);
+        return convertTeacherArray(response.body);
       }));
   }
 
@@ -32,27 +32,33 @@ export class TeacherService {
       .pipe(map((response: HttpResponse<any[]>) => {
         pageReq.totalPages = Number.parseInt(response.headers.get(PageRequest.TOTAL_PAGES_HEADER));
         pageReq.totalElements = Number.parseInt(response.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        return convertArray(response.body);
+        return convertTeacherArray(response.body);
       }))
   }
 
   findBy(id: string): Observable<Teacher> {
     return this.http
       .get(`${this.resourceUrl}/${id}`, { observe: 'body'})
-      .pipe(map((res: any) => convert(res)));
+      .pipe(map((res: any) => convertTeacher(res)));
   }
 
   create(teacher: Teacher, schoolId: string): Observable<Teacher> {
     return this.http
       .post(`${this.resourceUrl}/add/${schoolId}`, teacher, { observe:"response" })
-      .pipe(map((res: HttpResponse<any>) => convert(res.body)));
+      .pipe(map((res: HttpResponse<any>) => convertTeacher(res.body)));
+  }
+
+  update(teacher: Teacher, schoolId: string): Observable<Teacher> {
+    return this.http
+      .put(this.resourceUrl, teacher, { params: new HttpParams().set('schoolId', schoolId)})
+      .pipe(map((res: any) => convertTeacher(res)))
   }
 }
 
-export function convert(data: any): Teacher {
-  return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school), data.avgRating);
+export function convertTeacher(data: any): Teacher {
+  return new Teacher(data.id, data.name, data.isMale, convertSchool(data.school), data.avgRating, data.status);
 }
 
-export function convertArray(data: any[]): Teacher[] {
-  return data?.map(entry => convert(entry));
+export function convertTeacherArray(data: any[]): Teacher[] {
+  return data?.map(entry => convertTeacher(entry));
 }

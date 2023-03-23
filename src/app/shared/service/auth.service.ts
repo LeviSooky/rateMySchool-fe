@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, catchError, EMPTY, Observable, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {User} from "../model/user.model";
+import {AuthUser, getUser} from "../model/auth-user.model";
 import jwtDecode from "jwt-decode";
 import {Router} from "@angular/router";
 import {ToastService} from "./toast.service";
@@ -11,12 +11,11 @@ import {ToastService} from "./toast.service";
 })
 export class AuthService {
 
-  authUser = new BehaviorSubject<User>(null);
+  authUser = new BehaviorSubject<AuthUser>(getUser());
   jwt: string = '';
   decodedToken = {};
   constructor(private http: HttpClient,
-              private router: Router,
-              private toastService: ToastService) {}
+              private router: Router) {}
 
   login(credentials: {}): Observable<Object> {
     return this.http
@@ -24,15 +23,16 @@ export class AuthService {
       .pipe(tap(response => {
         let bearer = response.headers.get('Authorization');
         if (bearer !== null) {
-          let user = new User(jwtDecode(bearer), bearer);
+          let user = new AuthUser(jwtDecode(bearer), bearer);
           this.authUser.next(user);
+          localStorage.setItem('user', JSON.stringify(user));
         }
       }), catchError(() => EMPTY))
   }
 
   logout() {
     this.authUser.next(null);
+    localStorage.removeItem('user');
     this.router.navigate(['/login']);
-    this.toastService.showInfoToast("A bejelentkezés lejárt, kérjük jelentkezzen be újra!");
   }
 }
