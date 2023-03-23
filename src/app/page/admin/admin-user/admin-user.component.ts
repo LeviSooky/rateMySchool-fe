@@ -49,8 +49,6 @@ export class AdminUserComponent implements OnInit {
 
   ngOnInit(): void {
     this.search();
-    this.formGroup.valueChanges
-      .subscribe(changes => console.log(this.formGroup))
   }
 
   get firstName(): FormControl {

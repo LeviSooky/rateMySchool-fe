@@ -167,7 +167,6 @@ export class TeacherListComponent implements OnInit, OnDestroy {
     this.isMale.setValue(teacher.isMale);
     this.name.setValue(teacher.name);
     this.school.setValue(teacher.school);
-    console.log(this.school)
     this.modalService.open(this.creationModal,
       {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true});
   }

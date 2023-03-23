@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate {
       .pipe(
         map(user => {
           let authorized = user && user.roles.findIndex(role => role === Role.ADMIN) !== -1;
-          console.log(authorized)
           if (authorized) {
             return true;
           }

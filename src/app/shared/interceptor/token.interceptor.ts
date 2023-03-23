@@ -27,7 +27,6 @@ export class TokenInterceptor implements HttpInterceptor {
             return next.handle(request);
           }
           if (moment().isAfter(user.exp)) {
-            console.log(user)
             this.authService.logout();
             this.toastService.showInfoToast("A bejelentkezés lejárt, kérjük jelentkezzen be újra!");
             return next.handle(request);
