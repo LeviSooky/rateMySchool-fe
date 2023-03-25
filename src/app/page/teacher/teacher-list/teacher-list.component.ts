@@ -68,7 +68,7 @@ export class TeacherListComponent implements OnInit, OnDestroy {
     this.schoolPageReq.setSort(new Sort('name', SortDirection.ASC));
     this.formGroup = new FormGroup({
 
-      name: new FormControl('', [Validators.required, Validators.minLength(10)]),
+      name: new FormControl('', [Validators.required, Validators.minLength(8)]),
       isMale: new FormControl(false, [Validators.required]),
       school: new FormControl<School>(null, [Validators.required, Validators.nullValidator]),
     })

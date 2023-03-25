@@ -18,3 +18,9 @@ nav li button:focus {
   outline: none;
   box-shadow: none;
 }
+
+.img-thumbnail {
+  max-height: 400px;
+  max-width: 400px;
+  margin-left: 10px;
+}

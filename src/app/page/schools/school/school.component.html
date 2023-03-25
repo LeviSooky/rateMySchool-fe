@@ -12,7 +12,7 @@
         </div>
         <div class="d-flex mt-2">
           <h5 class="title">Weboldal:</h5>
-          <h5 class="px-2">{{school.websiteUrl}}</h5>
+          <a class="h5 px-2" (click)="goToLink(school.websiteUrl)">{{school.websiteUrl | domain}}</a>
         </div>
         <div class="d-flex mt-2">
           <h5 class="title">Város:</h5>

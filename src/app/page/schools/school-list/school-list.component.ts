@@ -26,6 +26,7 @@ import {ModeratorService} from "../../../shared/service/moderator.service";
 import {AuthService} from "../../../shared/service/auth.service";
 import {City} from "../../../shared/model/city.model";
 import {CityService} from "../../../shared/service/city.service";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'app-school-list',
@@ -49,6 +50,7 @@ export class SchoolListComponent implements OnInit, OnDestroy {
   searchingInline: boolean = false;
   authSub: Subscription;
   updateSchoolId: string;
+  url = 'assets/img-placeholder.webp';
   isEdit: boolean = false;
 
   imageUpload;
@@ -163,6 +165,9 @@ export class SchoolListComponent implements OnInit, OnDestroy {
     window.scrollTo(0, 0);
   }
 
+  resetImagePreview() {
+    this.url = 'assets/img-placeholder.webp';
+  }
 
   clearCurrentSort() {
     //@ts-ignore
@@ -177,6 +182,7 @@ export class SchoolListComponent implements OnInit, OnDestroy {
 
   openCreationModal() {
     this.formGroup.reset();
+    this.resetImagePreview();
     this.isEdit = false;
     this.updateSchoolId = null;
     this.modalService.open(this.creationModal,
@@ -218,6 +224,16 @@ export class SchoolListComponent implements OnInit, OnDestroy {
     schoolToUpdate.name = this.name.value;
     schoolToUpdate.city = this.city.value;
     schoolToUpdate.websiteUrl = this.websiteUrl.value;
+    if (this.imageUpload) {
+      let form = new FormData();
+      form.append('schoolId', schoolToUpdate.id);
+      form.append('image', this.imageUpload);
+      this.imageService.save(form)
+        .pipe()
+        .subscribe({
+          error: () => this.toastService.showError('Hiba történt a képfeltöltés során')
+        })
+    }
     this.moderatorService.update(schoolToUpdate)
       .pipe(take(1))
       .subscribe({
@@ -244,8 +260,21 @@ export class SchoolListComponent implements OnInit, OnDestroy {
     this.search();
   }
 
+  readURL(event:any) {
+    if (event.target.files && event.target.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = (event:any) => {
+        this.url = event.target.result;
+      }
+
+      reader.readAsDataURL(event.target.files[0]);
+    }
+  }
+
   setImage(event: any) {
     this.imageUpload = event.target.files[0];
+    this.readURL(event);
   }
 
   goToLink(url: string) {
@@ -264,11 +293,17 @@ export class SchoolListComponent implements OnInit, OnDestroy {
       })
   }
 
+  getBaseUrl() {
+    return environment.apiUrl;
+  }
+
   openEditModal(index: number) {
     this.formGroup.reset();
+    this.resetImagePreview();
     let school = this.schools[index];
     this.isEdit = true;
     this.updateSchoolId = school.id;
+    this.url = this.getBaseUrl() + '/api/image/' + school.id;
     this.city.setValue(school.city);
     this.name.setValue(school.name);
     this.websiteUrl.setValue(school.websiteUrl);

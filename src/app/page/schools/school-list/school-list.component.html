@@ -122,8 +122,9 @@
         </div>
         <small *ngIf="searchingInline" class="form-text text-muted">searching...</small>
       </div>
+      <img [src]="url" alt="your image" class="img-thumbnail" (error)="resetImagePreview()"/>
       <div class="input-group mb-3">
-        <input type="file"  [attr.required]="!isEdit" accept="image/png" class="form-control" id="inputGroupFile02" formControlName="image" (change)="setImage($event)">
+        <input type="file" [attr.required]="!isEdit" accept="image/png" class="form-control" id="inputGroupFile02" formControlName="image" (change)="setImage($event)">
         <label class="input-group-text" for="inputGroupFile02">Kép feltöltés</label>
       </div>
     </form>

@@ -97,6 +97,10 @@ export class SchoolComponent implements OnInit {
     return environment.apiUrl;
   }
 
+  goToLink(url: string) {
+    window.open(url, "_blank");
+  }
+
   getReviewSearch() {
     return !this.user
       ? this.reviewService.findAllActiveBy(this.id, this.pageReq)

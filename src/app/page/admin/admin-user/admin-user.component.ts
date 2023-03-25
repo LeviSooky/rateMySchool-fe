@@ -79,7 +79,10 @@ export class AdminUserComponent implements OnInit {
     this.adminService.delete(id)
       .pipe(take(1))
       .subscribe({
-        complete: () => this.toastService.showSuccessToast('Sikeres törlés!'),
+        complete: () => {
+          this.toastService.showSuccessToast('Sikeres törlés!');
+          this.search();
+        },
         error: () => this.toastService.showError('Valami hiba történt')
       })
   }

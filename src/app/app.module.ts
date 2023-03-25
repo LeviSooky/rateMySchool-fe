@@ -9,7 +9,6 @@ import {HttpClient, HttpClientModule} from "@angular/common/http";
 import {SharedModule} from "./shared/shared.module";
 import {ToastsContainer} from "./shared/component/toast/toast-container.component";
 import {LoginComponent} from './page/login/login.component';
-import {NgxSpinnerModule} from "ngx-spinner";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
