@@ -100,6 +100,7 @@ export class AdminUserComponent implements OnInit {
   }
 
   openCreationModal() {
+    this.isEdit = false;
     this.modalService.open(this.creationModal,
       {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true})
   }
@@ -112,7 +113,7 @@ export class AdminUserComponent implements OnInit {
     this.firstName.setValue(user.firstName);
     this.lastName.setValue(user.lastName);
     this.email.setValue(user.email);
-    this.isAdmin.setValue(user.isAdmin);
+    this.isAdmin.setValue(user.isAdmin ?? false);
     this.modalService.open(this.creationModal,
       {backdrop: "static", keyboard: false, size: 'xl', animation: true, centered:true})
   }

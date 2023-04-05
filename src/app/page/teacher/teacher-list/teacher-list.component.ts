@@ -15,7 +15,7 @@ import {
 } from "rxjs";
 import {Sort, SortDirection} from "../../../shared/model/sort.model";
 import {Router} from "@angular/router";
-import {AbstractControl, FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {SchoolService} from "../../../shared/service/school.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {School} from "../../../shared/model/school.model";

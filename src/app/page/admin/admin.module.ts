@@ -1,8 +1,9 @@
 import {NgModule} from '@angular/core';
-import {CommonModule, NgIf} from '@angular/common';
+import {NgIf} from '@angular/common';
 import {AdminUserComponent} from './admin-user/admin-user.component';
 import {RouterModule} from "@angular/router";
 import {SharedModule} from "../../shared/shared.module";
+import {AuthGuard} from "../../shared/model/auth.guard";
 
 
 @NgModule({
@@ -13,8 +14,11 @@ import {SharedModule} from "../../shared/shared.module";
     SharedModule,
     RouterModule.forChild([
       {
-        path: 'users', pathMatch: 'full', component: AdminUserComponent
+        path: 'users', pathMatch: 'full', component: AdminUserComponent, canActivate: [AuthGuard],
       },
+      {
+        path: '*', redirectTo: 'users',
+      }
     ]),
     NgIf,
   ]

@@ -42,6 +42,6 @@ export class AdminService {
   }
 
   private convert(data): User {
-    return new User(data.id, data.email, data.admin, data.lastName, data.firstName);
+    return new User(data.id, data.email, data.isAdmin, data.lastName, data.firstName);
   }
 }

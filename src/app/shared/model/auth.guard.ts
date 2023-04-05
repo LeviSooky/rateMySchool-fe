@@ -13,8 +13,7 @@ export class AuthGuard implements CanActivate {
     return this.authService.authUser
       .pipe(
         map(user => {
-          let authorized = user && user.roles.findIndex(role => role === Role.ADMIN) !== -1;
-          if (authorized) {
+          if (user.roles.includes(Role.ADMIN)) {
             return true;
           }
           this.router.navigate(['/login']);

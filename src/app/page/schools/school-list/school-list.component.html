@@ -70,7 +70,7 @@
         </tr>
       </ng-container>
       <ng-container *ngIf="schools.length === 0">
-        <td colspan="3" class="text-center no-result">
+        <td [colSpan]="user ? 5 : 4" class="text-center no-result">
           Az adott keresés alapján nem található iskola!
         </td>
       </ng-container>

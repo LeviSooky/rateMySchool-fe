@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {map, Observable} from "rxjs";
+import {catchError, EMPTY, map, Observable} from "rxjs";
 import {City} from "../model/city.model";
 
 @Injectable({
@@ -14,7 +14,7 @@ export class CityService {
   findAllBy(keyword: string): Observable<City[]> {
     return this.http
       .get(`${this.baseUrl}/${keyword}`, { observe: 'body'})
-      .pipe(map((res: any[]) => this.convertArray(res)))
+      .pipe(map((res: any[]) => this.convertArray(res)), catchError(() => EMPTY))
   }
 
   private convertArray(res: any[]): City[] {
