@@ -15,6 +15,7 @@ export class AuthService {
   jwt: string = '';
   decodedToken = {};
   constructor(private http: HttpClient,
+              private toastService: ToastService,
               private router: Router) {}
 
   login(credentials: {}): Observable<Object> {
@@ -27,7 +28,10 @@ export class AuthService {
           this.authUser.next(user);
           localStorage.setItem('user', JSON.stringify(user));
         }
-      }), catchError(() => EMPTY))
+      }), catchError(() => {
+        this.toastService.showError('Sikertelen bejelentkezés, próbálkozz újra!')
+        return EMPTY;
+      }))
   }
 
   logout() {

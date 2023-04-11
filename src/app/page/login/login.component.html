@@ -19,7 +19,7 @@
                 <input type="password" formControlName="password" id="typePasswordX" class="form-control form-control-lg" placeholder="Password" />
                 <label for="typePasswordX">Jelszó</label>
               </div>
-              <button class="btn btn-outline-light btn-lg px-5" (click)="onLogin()" type="submit">Login</button>
+              <button class="btn btn-outline-light btn-lg px-5" [disabled]="form.invalid" (click)="onLogin()" type="submit">Login</button>
             </div>
           </div>
         </div>

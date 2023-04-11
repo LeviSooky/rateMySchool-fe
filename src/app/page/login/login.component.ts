@@ -39,7 +39,7 @@ export class LoginComponent {
       }).pipe(take(1))
         .subscribe(res => {
           this.router.navigate(['/schools']);
-        }, () => this.toastService.showError('valami hiba történt, próbálkozz újra!'))
+        })
     }
   }
 

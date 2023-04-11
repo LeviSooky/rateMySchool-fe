@@ -26,25 +26,25 @@ export class ModeratorService {
   moderateTeacherReview(reviewId: string, shouldActivate: boolean) {
     let params = new HttpParams().append('shouldActivate', shouldActivate);
     return this.http
-      .get(`${this.baseUrl}/teachers/reviews/moderate/${reviewId}`, { params: params})
+      .patch(`${this.baseUrl}/teachers/reviews/moderate/${reviewId}`, null, { params: params})
   }
 
   moderateSchoolReview(reviewId: string, shouldActivate: boolean) {
     let params = new HttpParams().append('shouldActivate', shouldActivate);
     return this.http
-      .get(`${this.baseUrl}/schools/reviews/moderate/${reviewId}`, { params: params})
+      .patch(`${this.baseUrl}/schools/reviews/moderate/${reviewId}`, null, { params: params})
   }
 
   moderateSchool(id: string, shouldActivate: boolean) {
     let params = new HttpParams().append("shouldActivate", shouldActivate);
     return this.http
-      .get(`${this.baseUrl}/schools/moderate/${id}`, {params: params})
+      .patch(`${this.baseUrl}/schools/moderate/${id}`, null, {params: params})
   }
 
   moderateTeacher(id: string, shouldActivate: boolean) {
     let params = new HttpParams().append("shouldActivate", shouldActivate);
     return this.http
-      .get(`${this.baseUrl}/teachers/moderate/${id}`, {params: params})
+      .patch(`${this.baseUrl}/teachers/moderate/${id}`, null, {params: params})
   }
 
   findSchools(pagReq: PageRequest): Observable<School[]> {
