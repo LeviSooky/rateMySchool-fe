@@ -109,12 +109,12 @@
     <form class="row g-3">
       <div class="form">
         <label for="floatingTextarea2">Értékelés</label>
-        <textarea [formControl]="newReview" class="form-control" placeholder="Leave a comment here" id="floatingTextarea2" rows="12"></textarea>
+        <textarea [formControl]="newReview" class="form-control" placeholder="Írd le a tapasztalataidat" id="floatingTextarea2" rows="12"></textarea>
       </div>
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-light" (click)="saveReview(modal)">Küldés</button>
+    <button type="button" class="btn btn-light" [disabled]="newReview.invalid" (click)="saveReview(modal)">Küldés</button>
   </div>
 </ng-template>
 

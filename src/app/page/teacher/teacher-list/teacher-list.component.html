@@ -121,9 +121,17 @@
       </div>
       <div class="row mb-3">
         <div class="col-sm-10 offset-sm-2">
-          <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="gridCheck1" formControlName="isMale" role="switch">
-            <label class="form-check-label" for="gridCheck1">
+          <div class="form-check">
+            <input class="form-check-input" [value]="false" type="radio" name="flexRadioDefaultFemale" id="flexRadioDefault1"
+                   formControlName="isMale">
+            <label class="form-check-label" for="flexRadioDefault1">
+              Nő
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" [value]="true" name="flexRadioDefaultMale" id="flexRadioDefault2"
+                   formControlName="isMale">
+            <label class="form-check-label" for="flexRadioDefault2">
               Férfi
             </label>
           </div>

@@ -20,11 +20,8 @@ export class SchoolService {
     return this.http
       .get<any[]>(`${this.resourceUrl}/search/${keyword}`, { observe: "response", params: httpParams})
       .pipe(map((res:HttpResponse<any[]>) => {
-        // @ts-ignore
         page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
-        // @ts-ignore
         page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
-        // @ts-ignore
         return convertArray(res.body);
       }));
   }
