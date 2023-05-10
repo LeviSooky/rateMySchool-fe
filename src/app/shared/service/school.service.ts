@@ -15,7 +15,7 @@ export class SchoolService {
 
   constructor(private http: HttpClient) { }
 
-  findAllBy(keyword: string, page: PageRequest): Observable<School[]> { //TODO refactor
+  findAllBy(keyword: string, page: PageRequest): Observable<School[]> {
     let httpParams = getPaginationParams(page);
     return this.http
       .get<any[]>(`${this.resourceUrl}/search/${keyword}`, { observe: "response", params: httpParams})
@@ -29,10 +29,13 @@ export class SchoolService {
   findAll(page: PageRequest): Observable<School[]> {
     let httpParams = getPaginationParams(page);
     return this.http
-      .get<any[]>(`${this.resourceUrl}/search`, { observe: "response", params: httpParams})
+      .get<any[]>(`${this.resourceUrl}/search`,
+        { observe: "response", params: httpParams})
       .pipe(map((res:HttpResponse<any[]>) => {
-        page.totalPages = Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
-        page.totalElements = Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
+        page.totalPages =
+          Number.parseInt(res.headers.get(PageRequest.TOTAL_PAGES_HEADER));
+        page.totalElements =
+          Number.parseInt(res.headers.get(PageRequest.TOTAL_ELEMENTS_HEADER));
         return convertArray(res.body);
       }));
   }

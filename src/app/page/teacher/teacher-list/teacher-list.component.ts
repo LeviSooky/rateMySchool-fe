@@ -185,7 +185,7 @@ export class TeacherListComponent implements OnInit, OnDestroy {
           ? SortDirection.DESC
           : SortDirection.ASC;
     }
-    this.currentSort = this.pageReq.sort[0]; //TODO think
+    this.currentSort = this.pageReq.sort[0];
     this.search();
   }
 

@@ -120,7 +120,10 @@
         <div class="invalid-feedback">
           Kötelező választani!
         </div>
-        <small *ngIf="searchingInline" class="form-text text-muted">searching...</small>
+        <small *ngIf="searchingInline"
+               class="form-text text-muted">
+          searching...
+        </small>
       </div>
       <img [src]="url" alt="your image" class="img-thumbnail" (error)="resetImagePreview()"/>
       <div class="input-group mb-3">

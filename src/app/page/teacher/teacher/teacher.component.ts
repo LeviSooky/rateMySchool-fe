@@ -160,10 +160,10 @@ export class TeacherComponent implements OnInit, OnDestroy {
                     this.toastService.showSuccessToast("Sikeres módosítás!");
                     this.loadData();
                   });
-              }, () => this.loadData()) //TODO check consistency
+              }, () => this.loadData())
               break;
           }
-        }, () => this.spinnerService.hide('spinner')); //TODO
+        }, () => this.spinnerService.hide('spinner'));
       this.newReview.reset();
     }
   }

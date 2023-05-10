@@ -209,7 +209,7 @@ export class SchoolListComponent implements OnInit, OnDestroy {
               this.toastService.showSuccessToast('Sikeres létrehozás, moderátoraink jóváhagyása után láthatóvá válik az általad hozzáadott iskola!');
             }, () => {
               this.toastService.showError("Valami hiba történt, kérlek próbálkozz később!")
-            }) //TODO correct handling
+            })
         }, () => this.toastService.showError("Valami hiba történt, kérlek próbálkozz később!"))
       this.formGroup.reset();
     }

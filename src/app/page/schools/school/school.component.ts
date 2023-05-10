@@ -39,13 +39,10 @@ export class SchoolComponent implements OnInit {
   private sub = new Subscription();
   private id: string = '';
 
-  currentRate = 3.16; //TODO remove
-  // @ts-ignore
   school: School = null;
-  reviews: SchoolReview[] = []; //TODO change it
+  reviews: SchoolReview[] = [];
   pageReq = new PageRequest();
   selectedSort?: Sort;
-  openedReview: SchoolReview;
   EntityStatus = EntityStatus;
 
   newReview = new FormControl('', [Validators.required, Validators.minLength(10)])
@@ -87,10 +84,6 @@ export class SchoolComponent implements OnInit {
         })
 
       });
-  }
-
-  getByRating(): string {
-    return '';//TODO
   }
 
   getBaseUrl() {
@@ -213,7 +206,7 @@ export class SchoolComponent implements OnInit {
               }, () => this.loadData())
               break;
           }
-        }, () => this.spinnerService.hide('spinner')); //TODO
+        }, () => this.spinnerService.hide('spinner'));
       this.newReview.reset();
     }
   }
